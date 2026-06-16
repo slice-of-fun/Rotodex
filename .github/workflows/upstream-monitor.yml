@@ -1,0 +1,74 @@
+name: Upstream PKHeX Monitor
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Run daily at midnight UTC
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  monitor-upstream:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout RotoDex Repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '10.0.x' # Match the current target framework
+
+      - name: Clone PKHeX Upstream
+        run: |
+          git clone --depth 1 https://github.com/kwsch/PKHeX.git pkhex-upstream
+          
+      - name: Sync PKHeX.Core to Roto.Core
+        run: |
+          # Remove old Roto.Core files except .csproj
+          Get-ChildItem -Path "src/Roto.Core" -Exclude "*.csproj" | Remove-Item -Recurse -Force
+          # Copy fresh upstream PKHeX.Core files
+          Copy-Item -Path "pkhex-upstream/src/PKHeX.Core/*" -Destination "src/Roto.Core" -Recurse -Force
+        shell: powershell
+
+      - name: Verify Compilation (dotnet build)
+        id: verify_build
+        run: dotnet build src/RotoDex.Desktop
+        continue-on-error: true
+
+      - name: Run Tests (dotnet test)
+        id: verify_tests
+        if: steps.verify_build.outcome == 'success'
+        run: dotnet test tests/RotoDex.Integration.Tests
+        continue-on-error: true
+
+      - name: Create Pull Request on Success
+        if: steps.verify_build.outcome == 'success' && steps.verify_tests.outcome == 'success'
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: sync PKHeX upstream core"
+          title: "Upstream Sync: PKHeX.Core Updates"
+          body: |
+            Automated sync from upstream `kwsch/PKHeX`.
+            - **Compilation**: Passing
+            - **Tests**: Passing
+            
+            Please review the changes and merge if everything looks correct.
+          branch: auto-upstream-sync
+          base: main
+
+      - name: Create Issue on Failure
+        if: steps.verify_build.outcome == 'failure' || steps.verify_tests.outcome == 'failure'
+        uses: dacbd/create-issue-action@main
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "🚨 Upstream Sync Failed: Breaking Changes in PKHeX.Core"
+          body: |
+            The automated daily upstream sync failed because changes in the `PKHeX.Core` repository have broken the RotoDex build or tests.
+            
+            **Failure Stage**: 
+            - Build: ${{ steps.verify_build.outcome }}
+            - Tests: ${{ steps.verify_tests.outcome }}
+            
+            **Action Required**:
+            Please review the Action Logs to identify which API signatures or logic changed upstream, and update the `RotoDex.Adapter` layer accordingly.

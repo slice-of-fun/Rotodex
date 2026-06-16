@@ -1,0 +1,39 @@
+<Window x:Class="RotoDex.Desktop.BatchEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Batch Editor" Height="450" Width="600"
+        Background="{StaticResource BackgroundPrimary}" Foreground="{StaticResource TextPrimary}"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Write your batch scripts below (e.g. .Level=100, .Species=25)" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,10"/>
+        
+        <TextBox x:Name="ScriptInput" Grid.Row="1" AcceptsReturn="True" AcceptsTab="True" 
+                 FontFamily="Consolas" FontSize="14" Padding="10"
+                 Background="{StaticResource BackgroundSecondary}" Foreground="{StaticResource TextPrimary}"
+                 BorderBrush="{StaticResource AccentBlue}" BorderThickness="1"/>
+                 
+        <Grid Grid.Row="2" Margin="0,15,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <StackPanel Orientation="Horizontal" Grid.Column="0">
+                <TextBlock Text="Target Boxes: " VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}"/>
+                <ComboBox x:Name="BoxTargetComboBox" Width="150" VerticalAlignment="Center">
+                    <ComboBoxItem Content="All Boxes" IsSelected="True"/>
+                    <ComboBoxItem Content="Current Box Only"/>
+                </ComboBox>
+            </StackPanel>
+            
+            <Button Grid.Column="2" Content="Execute Script" Width="120" Height="35" Click="Execute_Click"/>
+        </Grid>
+    </Grid>
+</Window>

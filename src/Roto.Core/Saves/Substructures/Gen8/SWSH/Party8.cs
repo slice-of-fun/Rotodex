@@ -1,0 +1,10 @@
+namespace Roto.Core;
+
+public sealed class Party8(SAV8SWSH sav, SCBlock block) : SaveBlock<SAV8SWSH>(sav, block.Raw)
+{
+    public int PartyCount
+    {
+        get => Data[6 * PokeCrypto.SIZE_8PARTY];
+        set => Data[6 * PokeCrypto.SIZE_8PARTY] = (byte)value;
+    }
+}

@@ -1,0 +1,38 @@
+<Window x:Class="RotoDex.Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="RotoDex | Editor" Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        KeyDown="Window_KeyDown">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Menu Bar -->
+        <Border Grid.Row="0" Background="{StaticResource BackgroundSecondary}" Padding="5">
+            <Menu Background="Transparent" Foreground="{StaticResource TextPrimary}">
+                <MenuItem Header="File">
+                    <MenuItem Header="Open Save..." Click="OpenFile_Click" Background="{StaticResource BackgroundSecondary}"/>
+                    <MenuItem Header="Write Active Save" Click="SaveActiveFile_Click" Background="{StaticResource BackgroundSecondary}"/>
+                    <MenuItem Header="Close Active Save" Click="CloseActiveFile_Click" Background="{StaticResource BackgroundSecondary}"/>
+                    <Separator Background="{StaticResource BackgroundTertiary}"/>
+                    <MenuItem Header="Exit" Click="Exit_Click" Background="{StaticResource BackgroundSecondary}"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Undo" Click="Undo_Click" InputGestureText="Ctrl+Z" Background="{StaticResource BackgroundSecondary}"/>
+                    <MenuItem Header="Redo" Click="Redo_Click" InputGestureText="Ctrl+Y" Background="{StaticResource BackgroundSecondary}"/>
+                </MenuItem>
+                <MenuItem Header="Tools">
+                    <MenuItem Header="Batch Editor..." Click="OpenBatchEditor_Click" Background="{StaticResource BackgroundSecondary}"/>
+                </MenuItem>
+            </Menu>
+        </Border>
+
+        <!-- Tab Control for Multiple Saves -->
+        <TabControl x:Name="SaveTabs" Grid.Row="1" Background="{StaticResource BackgroundPrimary}" BorderThickness="0" Margin="10" SelectionChanged="SaveTabs_SelectionChanged"/>
+        
+    </Grid>
+</Window>
