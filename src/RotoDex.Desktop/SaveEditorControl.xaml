@@ -2,15 +2,245 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Background="{StaticResource BackgroundPrimary}">
-    <Grid Margin="20">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
+    
+    <Grid Margin="15">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="580"/>
             <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- Sidebar (Box Viewer) -->
-        <Border Grid.Column="0" Background="{StaticResource BackgroundSecondary}" CornerRadius="12" Padding="15">
+        <!-- LEFT PANEL: Editor Details -->
+        <Border Grid.Column="0" Background="{StaticResource BackgroundSecondary}" CornerRadius="12" Padding="20">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Active Pokémon Summary Header -->
+                <Grid Grid.Row="0" Margin="0,0,0,15">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <!-- Sprites & Placeholders -->
+                    <Border x:Name="PokemonDetailSpritePlaceholder" Grid.Column="0" Width="64" Height="64" Background="{StaticResource BackgroundTertiary}" CornerRadius="32" Margin="0,0,15,0">
+                        <TextBlock Text="?" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="28" FontWeight="Bold" Foreground="{StaticResource TextSecondary}"/>
+                    </Border>
+                    <Border x:Name="PokemonDetailSpriteContainer" Grid.Column="0" Width="64" Height="64" Background="#0F172A" CornerRadius="32" Margin="0,0,15,0" Visibility="Collapsed" BorderBrush="#3B82F6" BorderThickness="1.5">
+                        <Image x:Name="PokemonDetailSprite" Width="52" Height="52" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Active Pokémon Editor" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                        <TextBlock Text="Modify stats, moves, and view legality" FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                    
+                    <Border x:Name="LegalityBadge" Grid.Column="2" Background="{StaticResource BackgroundTertiary}" CornerRadius="6" Padding="12,6" VerticalAlignment="Center">
+                        <TextBlock x:Name="LegalityText" Text="No Pokémon Selected" FontWeight="Bold" FontSize="12" Foreground="{StaticResource TextPrimary}"/>
+                    </Border>
+                </Grid>
+
+                <Separator Grid.Row="1" Background="{StaticResource BackgroundTertiary}" Margin="0,0,0,15"/>
+
+                <!-- Main Tabs of Editor -->
+                <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0">
+                    
+                    <!-- Tab 1: Main Data -->
+                    <TabItem Header="Main" Foreground="{StaticResource TextPrimary}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Species -->
+                                    <TextBlock Text="Species ID" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="SpeciesTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,12" Height="32"/>
+
+                                    <!-- Nickname -->
+                                    <TextBlock Text="Nickname" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="NicknameTextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" Height="32"/>
+
+                                    <!-- Level -->
+                                    <TextBlock Text="Level" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="LevelTextBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" Height="32"/>
+
+                                    <!-- Nature -->
+                                    <TextBlock Text="Nature ID" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="NatureTextBox" Grid.Row="3" Grid.Column="1" Margin="0,0,0,12" Height="32"/>
+
+                                    <!-- Gender -->
+                                    <TextBlock Text="Gender ID" Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                    <TextBox x:Name="GenderTextBox" Grid.Row="4" Grid.Column="1" Margin="0,0,0,12" Height="32"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                    
+                    <!-- Tab 2: Stats (IVs / EVs) -->
+                    <TabItem Header="Stats" Foreground="{StaticResource TextPrimary}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,15,0,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <!-- Individual Values (IVs) -->
+                                <StackPanel Grid.Row="0" Margin="0,0,0,20">
+                                    <TextBlock Text="Individual Values (IVs)" FontSize="14" FontWeight="Bold" Foreground="#3B82F6" Margin="0,0,0,10"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Text="HP" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="IvHpTextBox" Grid.Row="1" Grid.Column="0" Height="28"/>
+
+                                        <TextBlock Text="Atk" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="IvAtkTextBox" Grid.Row="1" Grid.Column="2" Height="28"/>
+
+                                        <TextBlock Text="Def" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="IvDefTextBox" Grid.Row="1" Grid.Column="4" Height="28"/>
+
+                                        <TextBlock Text="SpA" Grid.Row="0" Grid.Column="6" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="IvSpaTextBox" Grid.Row="1" Grid.Column="6" Height="28"/>
+
+                                        <TextBlock Text="SpD" Grid.Row="0" Grid.Column="8" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="IvSpdTextBox" Grid.Row="1" Grid.Column="8" Height="28"/>
+
+                                        <TextBlock Text="Spe" Grid.Row="0" Grid.Column="10" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="IvSpeTextBox" Grid.Row="1" Grid.Column="10" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+
+                                <!-- Effort Values (EVs) -->
+                                <StackPanel Grid.Row="1">
+                                    <TextBlock Text="Effort Values (EVs)" FontSize="14" FontWeight="Bold" Foreground="#10B981" Margin="0,0,0,10"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Text="HP" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="EvHpTextBox" Grid.Row="1" Grid.Column="0" Height="28"/>
+
+                                        <TextBlock Text="Atk" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="EvAtkTextBox" Grid.Row="1" Grid.Column="2" Height="28"/>
+
+                                        <TextBlock Text="Def" Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="EvDefTextBox" Grid.Row="1" Grid.Column="4" Height="28"/>
+
+                                        <TextBlock Text="SpA" Grid.Row="0" Grid.Column="6" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="EvSpaTextBox" Grid.Row="1" Grid.Column="6" Height="28"/>
+
+                                        <TextBlock Text="SpD" Grid.Row="0" Grid.Column="8" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="EvSpdTextBox" Grid.Row="1" Grid.Column="8" Height="28"/>
+
+                                        <TextBlock Text="Spe" Grid.Row="0" Grid.Column="10" HorizontalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                        <TextBox x:Name="EvSpeTextBox" Grid.Row="1" Grid.Column="10" Height="28"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </ScrollViewer>
+                    </TabItem>
+                    
+                    <!-- Tab 3: Attacks -->
+                    <TabItem Header="Attacks" Foreground="{StaticResource TextPrimary}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,15,0,0">
+                            <StackPanel>
+                                <TextBlock Text="Active Moves" FontSize="14" FontWeight="Bold" Foreground="#3B82F6" Margin="0,0,0,15"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Text="Move 1 ID" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextSecondary}"/>
+                                    <TextBox x:Name="Move1TextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,12" Height="30"/>
+
+                                    <TextBlock Text="Move 2 ID" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextSecondary}"/>
+                                    <TextBox x:Name="Move2TextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" Height="30"/>
+
+                                    <TextBlock Text="Move 3 ID" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextSecondary}"/>
+                                    <TextBox x:Name="Move3TextBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" Height="30"/>
+
+                                    <TextBlock Text="Move 4 ID" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,12" Foreground="{StaticResource TextSecondary}"/>
+                                    <TextBox x:Name="Move4TextBox" Grid.Row="3" Grid.Column="1" Margin="0,0,0,12" Height="30"/>
+                                </Grid>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <!-- Tab 4: Analyzer -->
+                    <TabItem Header="Legality Analyzer" Foreground="{StaticResource TextPrimary}">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                            <Border Background="{StaticResource BackgroundTertiary}" CornerRadius="8" Padding="15">
+                                <TextBlock x:Name="LegalityReportBlock" Text="Load a Pokémon to see legality." TextWrapping="Wrap" FontFamily="Consolas" Foreground="{StaticResource TextPrimary}" FontSize="12" LineHeight="18"/>
+                            </Border>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+
+                <!-- Save changes button -->
+                <Button Grid.Row="3" Content="Save Changes" Width="160" Height="38" HorizontalAlignment="Right" Margin="0,15,0,0" Click="ApplyChanges_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- RIGHT PANEL: Storage Boxes (6x5 Grid Layout) -->
+        <Border Grid.Column="2" Background="{StaticResource BackgroundSecondary}" CornerRadius="12" Padding="20">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -19,80 +249,56 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Text="Storage Boxes" FontSize="20" FontWeight="Bold" Margin="0,0,0,15" Foreground="{StaticResource TextPrimary}"/>
-                <ComboBox x:Name="BoxSelector" Grid.Row="1" SelectionChanged="BoxSelector_SelectionChanged" Margin="0,0,0,15" Height="30"/>
-                <ListBox x:Name="BoxList" Grid.Row="2" SelectionChanged="BoxList_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
-            </Grid>
-        </Border>
-
-        <!-- Main Editor -->
-        <Border Grid.Column="2" Background="{StaticResource BackgroundSecondary}" CornerRadius="12" Padding="25">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
                 
-                <Grid Grid.Row="0" Margin="0,0,0,20">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!-- Sprite Placeholder -->
-                    <Border Grid.Column="0" Width="68" Height="56" Background="{StaticResource BackgroundTertiary}" CornerRadius="8" Margin="0,0,15,0">
-                        <TextBlock Text="?" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" Foreground="{StaticResource TextSecondary}"/>
-                    </Border>
+                <ComboBox x:Name="BoxSelector" Grid.Row="1" SelectionChanged="BoxSelector_SelectionChanged" Margin="0,0,0,15" Height="32"/>
+                
+                <!-- Uniform Grid for 6x5 PC Storage Layout -->
+                <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="BoxGrid">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="6" Rows="5" VerticalAlignment="Top"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Margin="3" Height="74" Background="{StaticResource BackgroundTertiary}" BorderThickness="1.5" BorderBrush="#1E293B" Click="SlotButton_Click" Tag="{Binding Index}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Border" Property="Background" Value="#334155"/>
+                                                    <Setter TargetName="Border" Property="BorderBrush" Value="#3B82F6"/>
+                                                </Trigger>
+                                                <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter TargetName="Border" Property="Background" Value="#1E3A8A"/>
+                                                    <Setter TargetName="Border" Property="BorderBrush" Value="#3B82F6"/>
+                                                </DataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
 
-                    <TextBlock Grid.Column="1" Text="Pokémon Details" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" Foreground="{StaticResource TextPrimary}"/>
-                    
-                    <Border x:Name="LegalityBadge" Grid.Column="2" Background="{StaticResource BackgroundTertiary}" CornerRadius="6" Padding="10,5" VerticalAlignment="Center">
-                        <TextBlock x:Name="LegalityText" Text="No Pokémon Selected" FontWeight="SemiBold" Foreground="{StaticResource TextPrimary}"/>
-                    </Border>
-                </Grid>
+                                    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="2">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                <Separator Grid.Row="1" Background="{StaticResource BackgroundTertiary}" Margin="0,0,0,20"/>
+                                        <!-- Sprite or Empty dash -->
+                                        <TextBlock Grid.Row="0" Text="•" FontSize="24" FontWeight="Bold" Foreground="#475569" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding IsEmpty, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                        <Image Grid.Row="0" Source="{Binding SpriteUrl}" Width="44" Height="44" RenderOptions.BitmapScalingMode="NearestNeighbor" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0" Margin="0,10,0,0">
-                    <!-- Main Tab -->
-                    <TabItem Header="Main" Foreground="{StaticResource TextPrimary}" Background="{StaticResource BackgroundTertiary}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
-                            <StackPanel>
-                                <Grid Margin="0,0,0,20">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="120"/>
-                                        <ColumnDefinition Width="250"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Text="Species ID" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10" Foreground="{StaticResource TextPrimary}"/>
-                                    <TextBox x:Name="SpeciesTextBox" Grid.Row="0" Grid.Column="1" Margin="0,0,0,10" Height="30"/>
-
-                                    <TextBlock Text="Nickname" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10" Foreground="{StaticResource TextPrimary}"/>
-                                    <TextBox x:Name="NicknameTextBox" Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" Height="30"/>
-
-                                    <TextBlock Text="Level" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="0,0,0,10" Foreground="{StaticResource TextPrimary}"/>
-                                    <TextBox x:Name="LevelTextBox" Grid.Row="2" Grid.Column="1" Margin="0,0,0,10" Height="30"/>
-                                </Grid>
-                                <Button Content="Save Changes" Width="150" HorizontalAlignment="Right" Margin="0,10,0,0" Height="35" Click="ApplyChanges_Click"/>
-                            </StackPanel>
-                        </ScrollViewer>
-                    </TabItem>
-                    
-                    <!-- Analyzer Tab -->
-                    <TabItem Header="Legality Analyzer" Foreground="{StaticResource TextPrimary}" Background="{StaticResource BackgroundTertiary}">
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
-                            <Border Background="{StaticResource BackgroundTertiary}" CornerRadius="8" Padding="15">
-                                <TextBlock x:Name="LegalityReportBlock" Text="Load a Pokémon to see legality." TextWrapping="Wrap" FontFamily="Consolas" Foreground="{StaticResource TextPrimary}"/>
-                            </Border>
-                        </ScrollViewer>
-                    </TabItem>
-                </TabControl>
+                                        <!-- Level / Nickname label -->
+                                        <TextBlock Grid.Row="1" Text="{Binding DisplayName}" FontSize="9" FontWeight="SemiBold" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>

@@ -10,12 +10,23 @@ using RotoDex.Core.Managers;
 
 namespace RotoDex.Desktop
 {
+    public class BoxSlotViewModel
+    {
+        public int Index { get; set; }
+        public IPokemon Pokemon { get; set; } = null!;
+        public string DisplayName { get; set; } = "";
+        public string SpriteUrl { get; set; } = "";
+        public bool IsSelected { get; set; }
+        public bool IsEmpty => Pokemon == null || Pokemon.Species == 0;
+    }
+
     public partial class SaveEditorControl : UserControl
     {
         private readonly SaveContext _context;
         private IPokemon? _currentPokemon;
         private IPokemon? _originalPokemonState;
         private int _currentSlot = -1;
+        private List<BoxSlotViewModel> _currentBoxSlots = new List<BoxSlotViewModel>();
 
         public SaveEditorControl(SaveContext context)
         {
@@ -44,27 +55,101 @@ namespace RotoDex.Desktop
 
             var boxPokemon = _context.SaveFile.GetBox(BoxSelector.SelectedIndex).ToList();
             
-            var displayList = boxPokemon.Select((p, i) => new { Index = i, Pokemon = p, Display = p.Species == 0 ? $"[{i + 1}] (Empty)" : $"[{i + 1}] {p.Nickname} (Species {p.Species})" }).ToList();
+            _currentBoxSlots = boxPokemon.Select((p, i) => new BoxSlotViewModel
+            {
+                Index = i,
+                Pokemon = p,
+                DisplayName = p.Species == 0 ? $"" : $"{p.Nickname}\nLvl {p.Level}",
+                SpriteUrl = p.Species == 0 ? "" : $"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{p.Species}.png",
+                IsSelected = (i == _currentSlot)
+            }).ToList();
             
-            BoxList.ItemsSource = displayList;
-            BoxList.DisplayMemberPath = "Display";
+            BoxGrid.ItemsSource = _currentBoxSlots;
         }
 
-        private void BoxList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SlotButton_Click(object sender, RoutedEventArgs e)
         {
-            if (BoxList.SelectedItem == null) return;
+            if (sender is Button button && button.Tag is int index)
+            {
+                SelectSlot(index);
+            }
+        }
 
-            dynamic item = BoxList.SelectedItem;
-            _currentPokemon = item.Pokemon as IPokemon;
+        private void SelectSlot(int index)
+        {
+            if (index < 0 || index >= _currentBoxSlots.Count) return;
+
+            _currentSlot = index;
+
+            // Update IsSelected flags
+            foreach (var slot in _currentBoxSlots)
+            {
+                slot.IsSelected = (slot.Index == index);
+            }
+
+            // Refresh storage grid items binding
+            BoxGrid.ItemsSource = null;
+            BoxGrid.ItemsSource = _currentBoxSlots;
+
+            var selectedSlot = _currentBoxSlots[index];
+            _currentPokemon = selectedSlot.Pokemon;
             _originalPokemonState = _currentPokemon?.Clone();
-            _currentSlot = item.Index;
 
             if (_currentPokemon != null && _currentPokemon.Species != 0)
             {
+                // Load Main data
                 SpeciesTextBox.Text = _currentPokemon.Species.ToString();
                 NicknameTextBox.Text = _currentPokemon.Nickname;
                 LevelTextBox.Text = _currentPokemon.Level.ToString();
+                NatureTextBox.Text = _currentPokemon.Nature.ToString();
+                GenderTextBox.Text = _currentPokemon.Gender.ToString();
                 
+                // Load IVs
+                var ivs = _currentPokemon.IVs;
+                IvHpTextBox.Text = ivs.Length > 0 ? ivs[0].ToString() : "0";
+                IvAtkTextBox.Text = ivs.Length > 1 ? ivs[1].ToString() : "0";
+                IvDefTextBox.Text = ivs.Length > 2 ? ivs[2].ToString() : "0";
+                IvSpaTextBox.Text = ivs.Length > 3 ? ivs[3].ToString() : "0";
+                IvSpdTextBox.Text = ivs.Length > 4 ? ivs[4].ToString() : "0";
+                IvSpeTextBox.Text = ivs.Length > 5 ? ivs[5].ToString() : "0";
+
+                // Load EVs
+                var evs = _currentPokemon.EVs;
+                EvHpTextBox.Text = evs.Length > 0 ? evs[0].ToString() : "0";
+                EvAtkTextBox.Text = evs.Length > 1 ? evs[1].ToString() : "0";
+                EvDefTextBox.Text = evs.Length > 2 ? evs[2].ToString() : "0";
+                EvSpaTextBox.Text = evs.Length > 3 ? evs[3].ToString() : "0";
+                EvSpdTextBox.Text = evs.Length > 4 ? evs[4].ToString() : "0";
+                EvSpeTextBox.Text = evs.Length > 5 ? evs[5].ToString() : "0";
+
+                // Load Moves
+                var moves = _currentPokemon.Moves;
+                Move1TextBox.Text = moves.Length > 0 ? moves[0].ToString() : "0";
+                Move2TextBox.Text = moves.Length > 1 ? moves[1].ToString() : "0";
+                Move3TextBox.Text = moves.Length > 2 ? moves[2].ToString() : "0";
+                Move4TextBox.Text = moves.Length > 3 ? moves[3].ToString() : "0";
+
+                // Load sprite icon
+                if (!string.IsNullOrEmpty(selectedSlot.SpriteUrl))
+                {
+                    try
+                    {
+                        PokemonDetailSprite.Source = new System.Windows.Media.Imaging.BitmapImage(new Uri(selectedSlot.SpriteUrl));
+                        PokemonDetailSpriteContainer.Visibility = Visibility.Visible;
+                        PokemonDetailSpritePlaceholder.Visibility = Visibility.Collapsed;
+                    }
+                    catch
+                    {
+                        PokemonDetailSpriteContainer.Visibility = Visibility.Collapsed;
+                        PokemonDetailSpritePlaceholder.Visibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    PokemonDetailSpriteContainer.Visibility = Visibility.Collapsed;
+                    PokemonDetailSpritePlaceholder.Visibility = Visibility.Visible;
+                }
+
                 RunLegalityCheck(_currentPokemon);
             }
             else
@@ -78,9 +163,34 @@ namespace RotoDex.Desktop
             SpeciesTextBox.Text = "";
             NicknameTextBox.Text = "";
             LevelTextBox.Text = "";
+            NatureTextBox.Text = "";
+            GenderTextBox.Text = "";
+            
+            IvHpTextBox.Text = "";
+            IvAtkTextBox.Text = "";
+            IvDefTextBox.Text = "";
+            IvSpaTextBox.Text = "";
+            IvSpdTextBox.Text = "";
+            IvSpeTextBox.Text = "";
+            
+            EvHpTextBox.Text = "";
+            EvAtkTextBox.Text = "";
+            EvDefTextBox.Text = "";
+            EvSpaTextBox.Text = "";
+            EvSpdTextBox.Text = "";
+            EvSpeTextBox.Text = "";
+            
+            Move1TextBox.Text = "";
+            Move2TextBox.Text = "";
+            Move3TextBox.Text = "";
+            Move4TextBox.Text = "";
+
             LegalityText.Text = "No Pokémon Selected";
             LegalityBadge.Background = (SolidColorBrush)FindResource("BackgroundTertiary");
             LegalityReportBlock.Text = "Load a Pokémon to see legality.";
+            
+            PokemonDetailSpriteContainer.Visibility = Visibility.Collapsed;
+            PokemonDetailSpritePlaceholder.Visibility = Visibility.Visible;
         }
 
         private void RunLegalityCheck(IPokemon pokemon)
@@ -153,6 +263,40 @@ namespace RotoDex.Desktop
 
             newState.Nickname = NicknameTextBox.Text;
 
+            if (int.TryParse(NatureTextBox.Text, out int nature))
+                newState.Nature = nature;
+
+            if (int.TryParse(GenderTextBox.Text, out int gender))
+                newState.Gender = gender;
+
+            // Apply IVs
+            int[] ivs = new int[6];
+            int.TryParse(IvHpTextBox.Text, out ivs[0]);
+            int.TryParse(IvAtkTextBox.Text, out ivs[1]);
+            int.TryParse(IvDefTextBox.Text, out ivs[2]);
+            int.TryParse(IvSpaTextBox.Text, out ivs[3]);
+            int.TryParse(IvSpdTextBox.Text, out ivs[4]);
+            int.TryParse(IvSpeTextBox.Text, out ivs[5]);
+            newState.IVs = ivs;
+
+            // Apply EVs
+            byte[] evs = new byte[6];
+            byte.TryParse(EvHpTextBox.Text, out evs[0]);
+            byte.TryParse(EvAtkTextBox.Text, out evs[1]);
+            byte.TryParse(EvDefTextBox.Text, out evs[2]);
+            byte.TryParse(EvSpaTextBox.Text, out evs[3]);
+            byte.TryParse(EvSpdTextBox.Text, out evs[4]);
+            byte.TryParse(EvSpeTextBox.Text, out evs[5]);
+            newState.EVs = evs;
+
+            // Apply Moves
+            ushort[] moves = new ushort[4];
+            ushort.TryParse(Move1TextBox.Text, out moves[0]);
+            ushort.TryParse(Move2TextBox.Text, out moves[1]);
+            ushort.TryParse(Move3TextBox.Text, out moves[2]);
+            ushort.TryParse(Move4TextBox.Text, out moves[3]);
+            newState.Moves = moves;
+
             var command = new RotoDex.Core.Commands.EditPokemonCommand(_context.SaveFile, BoxSelector.SelectedIndex, _currentSlot, _originalPokemonState, newState);
             _context.CommandManager.Execute(command);
             
@@ -160,21 +304,21 @@ namespace RotoDex.Desktop
             
             RunLegalityCheck(newState);
 
-            int selectedIndex = BoxSelector.SelectedIndex;
-            int listIndex = BoxList.SelectedIndex;
+            // Refresh box storage grid to show updated sprite / level
+            int currentSlotIdx = _currentSlot;
             BoxSelector_SelectionChanged(null, null);
-            BoxList.SelectedIndex = listIndex;
+            SelectSlot(currentSlotIdx);
         }
 
         public void RefreshData()
         {
             int boxIdx = BoxSelector.SelectedIndex;
-            int listIdx = BoxList.SelectedIndex;
+            int slotIdx = _currentSlot;
             if (boxIdx >= 0)
             {
                 BoxSelector_SelectionChanged(null, null);
-                if (listIdx >= 0 && listIdx < BoxList.Items.Count)
-                    BoxList.SelectedIndex = listIdx;
+                if (slotIdx >= 0 && slotIdx < _currentBoxSlots.Count)
+                    SelectSlot(slotIdx);
             }
         }
         
