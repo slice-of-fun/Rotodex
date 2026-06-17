@@ -5,7 +5,12 @@
     <ProjectReference Include="..\RotoDex.Analyzer\RotoDex.Analyzer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="RotoDex.png" />
+  </ItemGroup>
+
   <PropertyGroup>
+    <AssemblyName>RotoDex</AssemblyName>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
     <Nullable>enable</Nullable>

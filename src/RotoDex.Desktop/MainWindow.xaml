@@ -4,7 +4,10 @@
         Title="RotoDex | Editor" Height="750" Width="1100"
         WindowStartupLocation="CenterScreen"
         KeyDown="Window_KeyDown"
-        Icon="RotoDex.png">
+        Icon="RotoDex.png"
+        AllowDrop="True"
+        DragOver="Window_DragOver"
+        Drop="Window_Drop">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -41,8 +44,30 @@
             </DockPanel>
         </Border>
 
+        <!-- Welcome / Landing Empty State -->
+        <Grid x:Name="WelcomePanel" Grid.Row="1" Visibility="Visible">
+            <Border Background="{StaticResource BackgroundSecondary}" CornerRadius="12" Margin="30" Padding="40" BorderBrush="#1E293B" BorderThickness="1.5" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="600">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <!-- Glowing pulsing logo -->
+                    <Border Width="110" Height="110" CornerRadius="55" Background="#0F172A" BorderBrush="#3B82F6" BorderThickness="2" Padding="15" Margin="0,0,0,20">
+                        <Image Source="RotoDex.png"/>
+                    </Border>
+                    
+                    <TextBlock Text="Welcome to RotoDex" FontSize="26" FontWeight="ExtraBold" HorizontalAlignment="Center" Foreground="#F8FAFC" Margin="0,0,0,8"/>
+                    <TextBlock Text="An offline, lightning-fast Pokémon save file editor." FontSize="14" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,0,0,25"/>
+                    
+                    <Button Content="Open Pokémon Save File..." Width="220" Height="40" Click="OpenFile_Click" HorizontalAlignment="Center" Cursor="Hand"/>
+                    
+                    <!-- Drag & drop indicator -->
+                    <Border BorderBrush="#334155" BorderThickness="1" CornerRadius="8" Padding="20,12" Margin="0,25,0,0" Background="#0F172A">
+                        <TextBlock Text="💡 Tip: Drag and drop save files (.sav or main) directly into this window!" FontSize="12" Foreground="#64748B" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+
         <!-- Tab Control for Multiple Saves -->
-        <TabControl x:Name="SaveTabs" Grid.Row="1" Background="{StaticResource BackgroundPrimary}" BorderThickness="0" Margin="10" SelectionChanged="SaveTabs_SelectionChanged"/>
+        <TabControl x:Name="SaveTabs" Grid.Row="1" Background="{StaticResource BackgroundPrimary}" BorderThickness="0" Margin="10" SelectionChanged="SaveTabs_SelectionChanged" Visibility="Collapsed"/>
         
     </Grid>
 </Window>

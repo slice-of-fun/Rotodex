@@ -133,6 +133,8 @@ namespace RotoDex.Desktop
             
             SaveTabs.Items.Add(tabItem);
             SaveTabs.SelectedItem = tabItem;
+
+            UpdateWindowStates();
         }
 
         private void SaveManager_SaveClosed(object? sender, SaveContext context)
@@ -142,6 +144,22 @@ namespace RotoDex.Desktop
             {
                 SaveTabs.Items.Remove(tabToRemove);
             }
+
+            UpdateWindowStates();
+        }
+
+        private void UpdateWindowStates()
+        {
+            if (SaveTabs.Items.Count > 0)
+            {
+                WelcomePanel.Visibility = Visibility.Collapsed;
+                SaveTabs.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                WelcomePanel.Visibility = Visibility.Visible;
+                SaveTabs.Visibility = Visibility.Collapsed;
+            }
         }
 
         private void SaveTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -149,6 +167,39 @@ namespace RotoDex.Desktop
             if (e.Source is TabControl && SaveTabs.SelectedItem is TabItem selectedTab)
             {
                 _saveManager.ActiveContext = selectedTab.Tag as SaveContext;
+            }
+        }
+
+        private void Window_DragOver(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files.Length > 0)
+                {
+                    string filePath = files[0];
+                    try
+                    {
+                        _saveManager.OpenFile(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading save: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
     }
