@@ -1,4 +1,4 @@
-// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
 
 using System.Diagnostics.CodeAnalysis;
 
@@ -17,7 +17,7 @@ public static class MessageStrings
     public static string MsgProgramIllegalModeActive { get; set; } = "Illegal mode activated.";
     public static string MsgProgramUpdateAvailable { get; set; } = "New Update Available!";
     public static string MsgProgramCloseUnsaved { get; set; } = "Any unsaved changes will be lost.";
-    public static string MsgProgramCloseConfirm { get; set; } = "Are you sure you want to close PKHeX?";
+    public static string MsgProgramCloseConfirm { get; set; } = "Are you sure you want to close RotoDex?";
     public static string MsgProgramSaveUnsaved { get; set; } = "The Pokémon in the editor has unsaved changes.";
     public static string MsgProgramSaveFileConfirm { get; set; } = "Are you sure you want to load a new save file?";
     public static string MsgProgramError { get; set; } = "ERROR";
@@ -48,7 +48,7 @@ public static class MessageStrings
 
     #region Main Window
 
-    public static string MsgConfirmQuitProgram { get; set; } = "Quit PKHeX?";
+    public static string MsgConfirmQuitProgram { get; set; } = "Quit RotoDex?";
 
     public static string MsgFileDelete { get; set; } = "Delete this file?";
     public static string MsgFileDeleteFail { get; set; } = "Unable to delete file.";
@@ -62,7 +62,7 @@ public static class MessageStrings
     public static string MsgFileLoadFailAutoAdvise { get; set; } = "It is advised to manually remove bad filenames from the folder.";
     public static string MsgFileLoadFailAutoCause { get; set; } = "This is likely caused by Homebrew creating invalid filenames.";
     public static string MsgFileLoadVersionDetect { get; set; } = "Generation {0} Save File detected.";
-    public static string MsgFileLoadEncrypted { get; set; } = "PKHeX only edits decrypted save files.";
+    public static string MsgFileLoadEncrypted { get; set; } = "RotoDex only edits decrypted save files.";
     public static string MsgFileLoadEncryptedFail { get; set; } = "This save file is not decrypted.";
     public static string MsgFileLoadIncompatible { get; set; } = "Binary is not compatible with save file.";
 
@@ -89,7 +89,7 @@ public static class MessageStrings
     public static string MsgFileWriteProtected { get; set; } = "File's location is write protected:";
     public static string MsgFileWriteProtectedAdvice { get; set; } = "If the file is on a removable disk (SD card), please ensure the write protection switch is not set.";
     public static string MsgFileInUse { get; set; } = "Unable to load file. It could be in use by another program.";
-    public static string MsgFileUnsupported { get; set; } = "Attempted to load an unsupported file type/size. This could mean PKHeX doesn't support your save file or your save file is corrupt.";
+    public static string MsgFileUnsupported { get; set; } = "Attempted to load an unsupported file type/size. This could mean RotoDex doesn't support your save file or your save file is corrupt.";
     public static string MsgPKMUnsupported { get; set; } = "Attempted to load an unsupported file type/size. This could be caused by loading a different generation Pokémon file on an unsupported generation or your file is corrupt.";
 
     public static string MsgPKMConvertSuccess { get; set; } = "Converted from {0} to {1}.";
@@ -120,16 +120,16 @@ public static class MessageStrings
     public static string MsgSimulatorExportBattleBox { get; set; } = "Showdown Team (Battle Box) set to Clipboard.";
     public static string MsgSimulatorExportList { get; set; } = "Showdown Sets copied to Clipboard.";
 
-    public static string MsgBackupCreateLocation { get; set; } = "PKHeX can perform automatic backups if you create a folder with the name '{0}' in the same folder as PKHeX's executable.";
+    public static string MsgBackupCreateLocation { get; set; } = "RotoDex can perform automatic backups if you create a folder with the name '{0}' in the same folder as RotoDex's executable.";
     public static string MsgBackupCreateQuestion { get; set; } = "Would you like to create the backup folder now?";
     public static string MsgBackupDelete { get; set; } = "If you wish to no longer automatically back up save files, delete the '{0}' folder.";
     public static string MsgBackupUnable { get; set; } = "Unable to create backup folder";
     public static string MsgBackupSuccess { get; set; } = "Backup folder created!";
 
-    public static string MsgDatabase { get; set; } = "PKHeX's database was not found.";
+    public static string MsgDatabase { get; set; } = "RotoDex's database was not found.";
     public static string MsgDatabaseAdvice { get; set; } = "Please dump all boxes from a save file, then ensure the '{0}' folder exists.";
-    public static string MsgDatabaseExport { get; set; } = "Save to PKHeX's database?";
-    public static string MsgDatabaseLoad { get; set; } = "Load from PKHeX's database?";
+    public static string MsgDatabaseExport { get; set; } = "Save to RotoDex's database?";
+    public static string MsgDatabaseLoad { get; set; } = "Load from RotoDex's database?";
 
     #endregion
 

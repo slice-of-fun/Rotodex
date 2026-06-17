@@ -1,4 +1,4 @@
-using Roto.Core;
+﻿using Roto.Core;
 using RotoDex.Analyzer;
 using System.Linq;
 using Xunit;
@@ -25,7 +25,7 @@ public class AnalyzerTests
         var report = LegalityReportGenerator.Generate(pkm);
 
         // Assert
-        // Since we are mocking a raw entity, it might not be strictly Valid=true depending on PKHeX checks,
+        // Since we are mocking a raw entity, it might not be strictly Valid=true depending on RotoDex checks,
         // but we just want to ensure the Analyzer groups the CheckResult strings successfully without throwing.
         Assert.NotNull(report);
         Assert.NotNull(report.OriginChecks);

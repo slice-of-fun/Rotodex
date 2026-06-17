@@ -1,0 +1,24 @@
+﻿using System;
+using System.Windows.Forms;
+using Roto.Core;
+
+namespace RotoDex.Desktop.Controls;
+
+public partial class TrainerID : UserControl
+{
+    private readonly TrainerIDManager _manager;
+    public event EventHandler? UpdatedID;
+
+    public TrainerID()
+    {
+        InitializeComponent();
+        TIDFields.ToolTip = SIDFields.ToolTip = TSVTooltip;
+        _manager = new TrainerIDManager(TIDFields, SIDFields);
+        _manager.ValueChanged += (sender, e) => UpdatedID?.Invoke(sender, e);
+    }
+
+    public void LoadTrainer<T>(T trainer) where T : ITrainerID32, IGeneration => _manager.LoadTrainer(trainer);
+    public void LoadTrainer(ITrainerID32 trainer, byte generation) => _manager.LoadTrainer(trainer, generation);
+    public void LoadTrainer() => _manager.LoadTrainer();
+    public void SetToolTip() => _manager.SetToolTip();
+}

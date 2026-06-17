@@ -1,21 +1,62 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\RotoDex.Core\RotoDex.Core.csproj" />
-    <ProjectReference Include="..\RotoDex.Analyzer\RotoDex.Analyzer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="RotoDex.png" />
-  </ItemGroup>
-
   <PropertyGroup>
-    <AssemblyName>RotoDex</AssemblyName>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
+    <NoWarn>$(NoWarn);WFO1000</NoWarn>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
+    <CETCompat>false</CETCompat>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>RotoDex</PackageId>
+    <AssemblyName>RotoDex</AssemblyName>
+    <Description>RotoDex Save Editor</Description>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+    <StartupObject>RotoDex.Desktop.Program</StartupObject>
+    <RootNamespace>RotoDex.Desktop</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DebugType>portable</DebugType>
+    <EmbedAllSources>true</EmbedAllSources>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>false</PublishTrimmed>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Roto.Core\Roto.Core.csproj" />
+    <ProjectReference Include="..\RotoDex.Drawing.Misc\RotoDex.Drawing.Misc.csproj" />
+    <ProjectReference Include="..\RotoDex.Drawing.PokeSprite\RotoDex.Drawing.PokeSprite.csproj" />
+    <ProjectReference Include="..\RotoDex.Drawing\RotoDex.Drawing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Subforms\Save Editors\SAV_Inventory.resx">
+      <DependentUpon>SAV_Inventory.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
 
 </Project>

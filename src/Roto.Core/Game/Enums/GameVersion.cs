@@ -1,4 +1,4 @@
-namespace Roto.Core;
+﻿namespace Roto.Core;
 
 /// <summary>
 /// Game Version ID enum shared between actual Version IDs and lumped version groupings.
@@ -246,7 +246,7 @@ public enum GameVersion : byte
     #endregion
 
     // The following values are not actually stored values in pk data,
-    // These values are assigned within PKHeX as properties for various logic branching.
+    // These values are assigned within RotoDex as properties for various logic branching.
 
     #region Game Groupings (SaveFile type, roughly)
     /// <summary>

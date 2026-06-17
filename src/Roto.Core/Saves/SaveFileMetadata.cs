@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -36,7 +36,7 @@ public sealed record SaveFileMetadata(SaveFile SAV)
     /// Indicates whether the save file is a backup file matching this program's backup naming convention.
     /// </summary>
     /// <remarks>
-    /// Only check for ".bak" suffix; do not check for other naming conventions as they may vary between different release versions of PKHeX.
+    /// Only check for ".bak" suffix; do not check for other naming conventions as they may vary between different release versions of RotoDex.
     /// </remarks>
     public bool IsBackup => FilePath?.EndsWith(".bak", StringComparison.Ordinal) is true;
 

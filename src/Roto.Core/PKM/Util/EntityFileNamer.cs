@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -29,7 +29,7 @@ public static class EntityFileNamer
 }
 
 /// <summary>
-/// PKHeX's default <see cref="PKM"/> file naming logic.
+/// RotoDex's default <see cref="PKM"/> file naming logic.
 /// </summary>
 public sealed class DefaultEntityNamer : IFileNamer<PKM>
 {

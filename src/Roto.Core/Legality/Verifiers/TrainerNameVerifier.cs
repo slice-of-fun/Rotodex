@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using static Roto.Core.LegalityCheckResultCode;
 
 namespace Roto.Core;
@@ -12,7 +12,7 @@ public sealed class TrainerNameVerifier : Verifier
 
     private static readonly string[] SuspiciousOTNames =
     [
-        "PKHeX",
+        "RotoDex",
         "ＰＫＨｅＸ",
     ];
 

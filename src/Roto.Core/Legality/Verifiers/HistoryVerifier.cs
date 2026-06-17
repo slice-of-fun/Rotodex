@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using static Roto.Core.LegalityCheckResultCode;
 
 namespace Roto.Core;
@@ -78,7 +78,7 @@ public sealed class HistoryVerifier : Verifier
             return;
         }
 
-        if (pk.CurrentHandler != 0) // Badly edited; PKHeX doesn't trip this.
+        if (pk.CurrentHandler != 0) // Badly edited; RotoDex doesn't trip this.
             data.AddLine(GetInvalid(MemoryHTFlagInvalid));
         else if (pk.HandlingTrainerFriendship != 0)
             data.AddLine(GetInvalid(MemoryStatFriendshipHT0));

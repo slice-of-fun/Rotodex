@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using static System.Buffers.Binary.BinaryPrimitives;
 using static Roto.Core.SlotType8b;
@@ -131,7 +131,7 @@ public sealed record EncounterArea8b : IEncounterArea<EncounterSlot8b>, IAreaLoc
 
 public enum SlotType8b : byte
 {
-    // Unused; relic from previous PKHeX codebase and pkl not updated to remove.
+    // Unused; relic from previous RotoDex codebase and pkl not updated to remove.
     Any = 0,
 
     Grass = 1,
@@ -141,7 +141,7 @@ public enum SlotType8b : byte
     Super_Rod = 5,
     Rock_Smash = 6,
 
-    // Unused; relic from previous PKHeX codebase and pkl not updated to remove.
+    // Unused; relic from previous RotoDex codebase and pkl not updated to remove.
     Headbutt = 7,
 
     HoneyTree = 8,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace Roto.Core;
@@ -9,7 +9,7 @@ namespace Roto.Core;
 public sealed record EncounterArea7g : ISpeciesForm
 {
     /// <summary> Species for the area </summary>
-    /// <remarks> Due to how the encounter data is packaged by PKHeX, each species-form is grouped together. </remarks>
+    /// <remarks> Due to how the encounter data is packaged by RotoDex, each species-form is grouped together. </remarks>
     public ushort Species { get; }
     /// <summary> Form of the Species </summary>
     public byte Form { get; }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Roto.Core;
 
@@ -38,7 +38,7 @@ public static class Gen4GlobalTradeRules
     public static bool IsRomanizedKoreanTrainerName(ReadOnlySpan<char> trainerName) => trainerName switch
     {
         // This is very un-documented. If you have any samples, please share!
-        // Refer to https://github.com/kwsch/PKHeX/issues/4811
+        // Refer to https://github.com/kwsch/RotoDex/issues/4811
         // It's entirely possible that there are only 4 trainer names (determined via OT version & OT gender).
         // It's also possible that the game only sanitizes if the name+nickname has a Korean char.
         "Ahn" => true,   // 안

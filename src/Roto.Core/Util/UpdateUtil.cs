@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 
 namespace Roto.Core;
 
 public static class UpdateUtil
 {
     /// <summary>
-    /// Gets the latest version of PKHeX according to the GitHub API
+    /// Gets the latest version of RotoDex according to the GitHub API
     /// </summary>
-    /// <returns>A version representing the latest available version of PKHeX, or null if the latest version could not be determined</returns>
-    public static Version? GetLatestPKHeXVersion()
+    /// <returns>A version representing the latest available version of RotoDex, or null if the latest version could not be determined</returns>
+    public static Version? GetLatestRotoDexVersion()
     {
         const string apiEndpoint = "https://api.github.com/repos/kwsch/pkhex/releases/latest";
         var responseJson = NetUtil.GetStringFromURL(new Uri(apiEndpoint));

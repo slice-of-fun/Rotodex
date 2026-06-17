@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace Roto.Core;
@@ -45,7 +45,7 @@ public sealed class PK2 : GBPKML, ICaughtData2
     }
 
 
-    // We (PKHeX) internally manage as single-entry lists in temp buffers.
+    // We (RotoDex) internally manage as single-entry lists in temp buffers.
     public override int WriteDecryptedDataStored(Span<byte> destination) => PokeList2.WrapSingle(this, destination);
     public override void WriteEncryptedDataStored(Span<byte> destination) => WriteDecryptedDataStored(destination);
     public override void WriteDecryptedDataParty(Span<byte> destination) => WriteDecryptedDataStored(destination);

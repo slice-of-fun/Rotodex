@@ -1,11 +1,11 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Roto.Core;
 
 public static class LocalizeUtil
 {
     /// <summary>
-    /// Initializes PKHeX's runtime strings to the specified language.
+    /// Initializes RotoDex's runtime strings to the specified language.
     /// </summary>
     /// <param name="lang">2-char language ID</param>
     /// <param name="sav">Save data (optional)</param>

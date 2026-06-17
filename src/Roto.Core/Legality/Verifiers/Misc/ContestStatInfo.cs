@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using static Roto.Core.ContestStatGranting;
@@ -153,7 +153,7 @@ public static class ContestStatInfo
     {
         // By using Enigma and Lansat and a 25 +1/-1, can get a +9/+19s at minimum RPM
         // By using Strib, Chilan, Niniku, or Topo, can get a black +2/2/2 & 83 block (6:83) at minimum RPM.
-        // https://github.com/kwsch/PKHeX/issues/3517
+        // https://github.com/kwsch/RotoDex/issues/3517
         var sum = GetGainedSum(s, nature, initial);
         if (sum == 0)
             return 0;

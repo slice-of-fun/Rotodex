@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using RotoDex.Adapter;
 
@@ -59,7 +59,7 @@ namespace RotoDex.Core.Managers
                 if (string.IsNullOrWhiteSpace(line) || line.StartsWith("//") || line.StartsWith("#"))
                     continue;
 
-                // Support both PKHeX syntax (.Level=100) and standard (Level=100)
+                // Support both RotoDex syntax (.Level=100) and standard (Level=100)
                 var cleanLine = line.Trim();
                 if (cleanLine.StartsWith("."))
                     cleanLine = cleanLine.Substring(1);

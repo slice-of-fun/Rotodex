@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace Roto.Core;
 
@@ -49,7 +49,7 @@ public interface IBattleTemplate : ISpeciesForm, IGigantamaxReadOnly, IDynamaxLe
     byte Friendship { get; }
 
     /// <summary>
-    /// <see cref="PKM.Form"/> name of the Set entity, stored in PKHeX style (instead of Showdown's)
+    /// <see cref="PKM.Form"/> name of the Set entity, stored in RotoDex style (instead of Showdown's)
     /// </summary>
     string FormName { get; }
 

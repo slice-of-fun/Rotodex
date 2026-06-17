@@ -1,4 +1,4 @@
-namespace Roto.Core;
+﻿namespace Roto.Core;
 
 /// <summary>
 /// Common trainer names used in the program.
@@ -9,5 +9,5 @@ public static class TrainerName
     public const string GameFreakINT = "GF";
 
     public const string ProgramJPN = "ＰＫＨｅＸ";
-    public const string ProgramINT = "PKHeX";
+    public const string ProgramINT = "RotoDex";
 }

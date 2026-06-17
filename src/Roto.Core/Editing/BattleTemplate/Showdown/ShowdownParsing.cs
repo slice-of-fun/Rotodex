@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using static Roto.Core.Species;
@@ -87,10 +87,10 @@ public static class ShowdownParsing
     private const string MiniorFormName = "Meteor";
 
     /// <summary>
-    /// Converts the PKHeX standard form name to Showdown's form name.
+    /// Converts the RotoDex standard form name to Showdown's form name.
     /// </summary>
     /// <param name="species">Species ID</param>
-    /// <param name="form">PKHeX form name</param>
+    /// <param name="form">RotoDex form name</param>
     public static string GetShowdownFormName(ushort species, string form)
     {
         if (form.Length == 0)
@@ -131,7 +131,7 @@ public static class ShowdownParsing
         => FormConverter.IsCosplayPikachu(formName, formNames);
 
     /// <summary>
-    /// Converts the Showdown form name to PKHeX's form name.
+    /// Converts the Showdown form name to RotoDex's form name.
     /// </summary>
     /// <param name="species">Species ID</param>
     /// <param name="form">Showdown form name</param>
