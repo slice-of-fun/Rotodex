@@ -33,3 +33,5 @@ bld/
 rotomods/
 pkhex-upstream/
 *.dll
+
+legacy/
