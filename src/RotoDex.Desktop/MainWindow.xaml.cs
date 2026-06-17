@@ -14,19 +14,13 @@ namespace RotoDex.Desktop
         private readonly SaveManager _saveManager;
         private readonly PluginLoader _pluginLoader;
 
-        public MainWindow()
+        public MainWindow(SaveManager saveManager, PluginLoader pluginLoader)
         {
             InitializeComponent();
-            _saveManager = new SaveManager(new BackupManager());
+            _saveManager = saveManager;
             _saveManager.SaveOpened += SaveManager_SaveOpened;
             _saveManager.SaveClosed += SaveManager_SaveClosed;
-
-            // Initialize Plugin System
-            var modContext = new ModContext(_saveManager);
-            _pluginLoader = new PluginLoader();
-            
-            string rotomodsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rotomods");
-            _pluginLoader.LoadPlugins(rotomodsDir, modContext);
+            _pluginLoader = pluginLoader;
         }
 
         private void OpenFile_Click(object sender, RoutedEventArgs e)

@@ -1,9 +1,10 @@
 <Window x:Class="RotoDex.Desktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="RotoDex | Editor" Height="700" Width="1000"
+        Title="RotoDex | Editor" Height="750" Width="1100"
         WindowStartupLocation="CenterScreen"
-        KeyDown="Window_KeyDown">
+        KeyDown="Window_KeyDown"
+        Icon="RotoDex.png">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -11,24 +12,33 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Menu Bar -->
-        <Border Grid.Row="0" Background="{StaticResource BackgroundSecondary}" Padding="5">
-            <Menu Background="Transparent" Foreground="{StaticResource TextPrimary}">
-                <MenuItem Header="File">
-                    <MenuItem Header="Open Save..." Click="OpenFile_Click" Background="{StaticResource BackgroundSecondary}"/>
-                    <MenuItem Header="Write Active Save" Click="SaveActiveFile_Click" Background="{StaticResource BackgroundSecondary}"/>
-                    <MenuItem Header="Close Active Save" Click="CloseActiveFile_Click" Background="{StaticResource BackgroundSecondary}"/>
-                    <Separator Background="{StaticResource BackgroundTertiary}"/>
-                    <MenuItem Header="Exit" Click="Exit_Click" Background="{StaticResource BackgroundSecondary}"/>
-                </MenuItem>
-                <MenuItem Header="Edit">
-                    <MenuItem Header="Undo" Click="Undo_Click" InputGestureText="Ctrl+Z" Background="{StaticResource BackgroundSecondary}"/>
-                    <MenuItem Header="Redo" Click="Redo_Click" InputGestureText="Ctrl+Y" Background="{StaticResource BackgroundSecondary}"/>
-                </MenuItem>
-                <MenuItem Header="Tools">
-                    <MenuItem Header="Batch Editor..." Click="OpenBatchEditor_Click" Background="{StaticResource BackgroundSecondary}"/>
-                </MenuItem>
-            </Menu>
+        <!-- Header and Menu Bar -->
+        <Border Grid.Row="0" Background="{StaticResource BackgroundSecondary}" Padding="15,10,15,10" BorderBrush="#1E293B" BorderThickness="0,0,0,1">
+            <DockPanel>
+                <!-- Logo & Brand -->
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,25,0">
+                    <Image Source="RotoDex.png" Width="28" Height="28" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="RotoDex" FontSize="18" FontWeight="ExtraBold" VerticalAlignment="Center" Foreground="#3B82F6"/>
+                </StackPanel>
+
+                <!-- Menu Bar -->
+                <Menu Background="Transparent" Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center" DockPanel.Dock="Left">
+                    <MenuItem Header="File">
+                        <MenuItem Header="Open Save..." Click="OpenFile_Click" Background="{StaticResource BackgroundSecondary}"/>
+                        <MenuItem Header="Write Active Save" Click="SaveActiveFile_Click" Background="{StaticResource BackgroundSecondary}"/>
+                        <MenuItem Header="Close Active Save" Click="CloseActiveFile_Click" Background="{StaticResource BackgroundSecondary}"/>
+                        <Separator Background="{StaticResource BackgroundTertiary}"/>
+                        <MenuItem Header="Exit" Click="Exit_Click" Background="{StaticResource BackgroundSecondary}"/>
+                    </MenuItem>
+                    <MenuItem Header="Edit">
+                        <MenuItem Header="Undo" Click="Undo_Click" InputGestureText="Ctrl+Z" Background="{StaticResource BackgroundSecondary}"/>
+                        <MenuItem Header="Redo" Click="Redo_Click" InputGestureText="Ctrl+Y" Background="{StaticResource BackgroundSecondary}"/>
+                    </MenuItem>
+                    <MenuItem Header="Tools">
+                        <MenuItem Header="Batch Editor..." Click="OpenBatchEditor_Click" Background="{StaticResource BackgroundSecondary}"/>
+                    </MenuItem>
+                </Menu>
+            </DockPanel>
         </Border>
 
         <!-- Tab Control for Multiple Saves -->
