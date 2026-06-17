@@ -1,4 +1,4 @@
-﻿using Roto.Core;
+using Roto.Core;
 using RotoDex.Drawing;
 using RotoDex.Drawing.Misc;
 using RotoDex.Drawing.PokeSprite;
@@ -1096,11 +1096,13 @@ public sealed partial class PKMEditor : UserControl, IMainEditor
             {
                 Entity.Gender = (byte)CB_Form.SelectedIndex;
                 UC_Gender.Gender = Entity.GetSaneGender();
+                Entity.Gender = UC_Gender.Gender;
             }
         }
         else
         {
             UC_Gender.Gender = Entity.GetSaneGender();
+            Entity.Gender = UC_Gender.Gender;
         }
 
         RefreshFormArguments();
@@ -1253,6 +1255,7 @@ public sealed partial class PKMEditor : UserControl, IMainEditor
 
         // Check for Gender Changes
         UC_Gender.Gender = Entity.GetSaneGender();
+        Entity.Gender = UC_Gender.Gender;
 
         // If species changes and no nickname, set the new name == speciesName.
         if (!CHK_NicknamedFlag.Checked)
