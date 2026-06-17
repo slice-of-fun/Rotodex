@@ -38,7 +38,7 @@ namespace RotoDex.Desktop
                 BoxSelector.SelectedIndex = 0;
         }
 
-        private void BoxSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BoxSelector_SelectionChanged(object? sender, SelectionChangedEventArgs? e)
         {
             if (_context.SaveFile == null || BoxSelector.SelectedIndex < 0) return;
 
