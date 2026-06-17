@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -138,20 +138,7 @@ public partial class Main : Form
 
     public async Task CheckForUpdates()
     {
-        Version? latestVersion;
-        // User might not be connected to the internet or with a flaky connection.
-        try { latestVersion = UpdateUtil.GetLatestRotoDexVersion(); }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Exception while checking for latest version: {ex}");
-            return;
-        }
-        if (latestVersion is null || latestVersion <= Program.CurrentVersion)
-            return;
-
-        while (!IsHandleCreated) // Wait for form to be ready
-            await Task.Delay(2_000).ConfigureAwait(false);
-        await InvokeAsync(() => NotifyNewVersionAvailable(latestVersion)).ConfigureAwait(false); // invoke on GUI thread
+        await Task.CompletedTask;
     }
 
     private void NotifyNewVersionAvailable(Version version)
@@ -824,23 +811,12 @@ public partial class Main : Form
 
     private static string GetProgramTitle()
     {
-#if DEBUG
-        // Get the file path that started this exe.
-        var path = Environment.ProcessPath;
-        var date = path is null ? DateTime.Now : File.GetLastWriteTime(path);
-        string version = $"d-{date:yyyyMMdd}";
-#else
-        var v = Program.CurrentVersion;
-        string version = $"{2000+v.Major:00}{v.Minor:00}{v.Build:00}";
-#endif
-        return $"PKH{(HaX ? "a" : "e")}X ({version})";
+        return $"Roto{(HaX ? "hax" : "Dex")}";
     }
 
     private static string GetProgramTitle(SaveFile sav)
     {
-        string title = GetProgramTitle() + $" - {sav.GetType().Name}: ";
-        if (sav is ISaveFileRevision rev)
-            title = title.Insert(title.Length - 2, rev.SaveRevisionString);
+        string title = GetProgramTitle() + " - ";
         var version = GameInfo.GetVersionName(sav.Version);
         if (Settings.Privacy.HideSAVDetails)
             return title + $"[{version}]";
