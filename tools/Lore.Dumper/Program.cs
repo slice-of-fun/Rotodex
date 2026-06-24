@@ -31,8 +31,8 @@ namespace Lore.Dumper
             // Simple CSV parsing, handling quoted newlines
             using (var reader = new StreamReader(flavorTextPath))
             {
-                string header = reader.ReadLine();
-                string line;
+                string? header = reader.ReadLine();
+                string? line;
                 while ((line = ReadCsvLine(reader)) != null)
                 {
                     var cols = ParseCsvLine(line);
@@ -61,11 +61,11 @@ namespace Lore.Dumper
             Console.WriteLine($"Created dummy link.json at {linkPath}");
         }
 
-        static string ReadCsvLine(StreamReader reader)
+        static string? ReadCsvLine(StreamReader reader)
         {
             if (reader.EndOfStream) return null;
-            string line = reader.ReadLine();
-            while (line.Count(c => c == '"') % 2 != 0 && !reader.EndOfStream)
+            string? line = reader.ReadLine();
+            while (line != null && line.Count(c => c == '"') % 2 != 0 && !reader.EndOfStream)
             {
                 line += "\n" + reader.ReadLine();
             }

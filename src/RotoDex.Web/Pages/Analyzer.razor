@@ -128,14 +128,10 @@
 }
 
 @code {
-    private bool _isDragging;
     private PKM? _pkm;
     private AnalyzerReport? _report;
     private string _errorMessage = "";
     private Dictionary<AnalyzerCheckResult, string> _explanations = new();
-
-    private void OnDragOver() => _isDragging = true;
-    private void OnDragLeave() => _isDragging = false;
 
     private async Task ExplainCheck(AnalyzerCheckResult check)
     {
