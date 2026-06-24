@@ -26,9 +26,9 @@ jobs:
       shell: pwsh
       run: |
         if ("${{ github.event_name }}" -eq "workflow_dispatch") {
-          echo "VERSION=${{ github.event.inputs.version }}" >> $env:GITHUB_ENV
+          echo "VERSION=${{ github.event.inputs.version }}" >> $env:GITHUB_OUTPUT
         } else {
-          echo "VERSION=${{ github.ref_name }}" >> $env:GITHUB_ENV
+          echo "VERSION=${{ github.ref_name }}" >> $env:GITHUB_OUTPUT
         }
 
     - name: Setup .NET
@@ -46,6 +46,6 @@ jobs:
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: ${{ env.VERSION }}
+        tag_name: ${{ steps.set_version.outputs.VERSION }}
         files: RotoDex-Desktop-win-x64.zip
         generate_release_notes: true
