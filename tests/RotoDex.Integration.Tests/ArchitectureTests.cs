@@ -8,7 +8,7 @@ namespace RotoDex.Integration.Tests
         [Fact]
         public void Applications_ShouldNotReference_Adapter()
         {
-            var result = Types.InAssembly(typeof(Desktop.App).Assembly)
+            var result = Types.InAssembly(typeof(Desktop.Program).Assembly)
                 .ShouldNot()
                 .HaveDependencyOn("RotoDex.Adapter")
                 .GetResult();
@@ -19,7 +19,7 @@ namespace RotoDex.Integration.Tests
         [Fact]
         public void Applications_ShouldNotReference_CoreEngine()
         {
-            var result = Types.InAssembly(typeof(Desktop.App).Assembly)
+            var result = Types.InAssembly(typeof(Desktop.Program).Assembly)
                 .ShouldNot()
                 .HaveDependencyOn("Roto.Core")
                 .GetResult();
