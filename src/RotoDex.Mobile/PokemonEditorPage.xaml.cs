@@ -29,7 +29,7 @@ public partial class PokemonEditorPage : ContentPage
         NatureEntry.Text = _pokemon.Nature.ToString();
     }
 
-    private async void OnSaveChangesClicked(object sender, EventArgs e)
+    private async void OnSaveChangesClicked(object? sender, EventArgs e)
     {
         if (_pokemon == null) return;
 
@@ -51,16 +51,16 @@ public partial class PokemonEditorPage : ContentPage
             if (int.TryParse(NatureEntry.Text, out int nature))
                 _pokemon.Nature = (Nature)nature;
 
-            await DisplayAlert("Success", "Pokémon updated successfully!", "OK");
+            await DisplayAlertAsync("Success", "Pokémon updated successfully!", "OK");
             await Navigation.PopAsync();
         }
         catch (Exception ex)
         {
-            await DisplayAlert("Error", $"Failed to save changes: {ex.Message}", "OK");
+            await DisplayAlertAsync("Error", $"Failed to save changes: {ex.Message}", "OK");
         }
     }
 
-    private async void OnImportClicked(object sender, EventArgs e)
+    private async void OnImportClicked(object? sender, EventArgs e)
     {
         try
         {
@@ -88,7 +88,7 @@ public partial class PokemonEditorPage : ContentPage
         }
     }
 
-    private async void OnExportClicked(object sender, EventArgs e)
+    private async void OnExportClicked(object? sender, EventArgs e)
     {
         try
         {
@@ -108,10 +108,5 @@ public partial class PokemonEditorPage : ContentPage
         {
             await DisplayAlertAsync("Error", $"Failed to export: {ex.Message}", "OK");
         }
-    }
-
-    private Task DisplayAlertAsync(string title, string message, string cancel)
-    {
-        return MainThread.InvokeOnMainThreadAsync(() => DisplayAlert(title, message, cancel));
     }
 }

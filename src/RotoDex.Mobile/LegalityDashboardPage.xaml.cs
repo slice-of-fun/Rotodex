@@ -26,7 +26,7 @@ public partial class LegalityDashboardPage : ContentPage
         ResultsGrid.ItemsSource = IllegalResults;
     }
 
-    private async void OnAnalyzeClicked(object sender, EventArgs e)
+    private async void OnAnalyzeClicked(object? sender, EventArgs e)
     {
         AnalyzeBtn.IsEnabled = false;
         LoadingSpinner.IsVisible = true;
@@ -88,7 +88,7 @@ public partial class LegalityDashboardPage : ContentPage
         return results;
     }
 
-    private async void OnResultTapped(object sender, TappedEventArgs e)
+    private async void OnResultTapped(object? sender, TappedEventArgs e)
     {
         if (e.Parameter is PKM pkm)
         {

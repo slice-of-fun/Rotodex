@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace RotoDex.Desktop;
 
-internal static class Program
+public static class Program
 {
     // Pipelines build can sometimes tack on text to the version code. Strip it out.
     public static readonly Version CurrentVersion = Version.Parse(GetSaneVersionTag(Application.ProductVersion));

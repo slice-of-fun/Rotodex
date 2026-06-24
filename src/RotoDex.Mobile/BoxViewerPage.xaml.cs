@@ -67,7 +67,7 @@ public partial class BoxViewerPage : ContentPage
         }
     }
 
-    private void OnPreviousBoxClicked(object sender, EventArgs e)
+    private void OnPreviousBoxClicked(object? sender, EventArgs e)
     {
         if (_currentBox > 0)
         {
@@ -76,7 +76,7 @@ public partial class BoxViewerPage : ContentPage
         }
     }
 
-    private void OnNextBoxClicked(object sender, EventArgs e)
+    private void OnNextBoxClicked(object? sender, EventArgs e)
     {
         if (_currentBox < _sav.BoxCount - 1)
         {
@@ -85,7 +85,7 @@ public partial class BoxViewerPage : ContentPage
         }
     }
 
-    private async void OnSlotTapped(object sender, TappedEventArgs e)
+    private async void OnSlotTapped(object? sender, TappedEventArgs e)
     {
         if (e.Parameter is int slotIndex)
         {

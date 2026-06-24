@@ -12,7 +12,7 @@ public partial class MainPage : ContentPage
         InitializeComponent();
     }
 
-    private async void OnOpenSaveClicked(object sender, EventArgs e)
+    private async void OnOpenSaveClicked(object? sender, EventArgs e)
     {
         try
         {
@@ -65,7 +65,7 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private async void OnExportSaveClicked(object sender, EventArgs e)
+    private async void OnExportSaveClicked(object? sender, EventArgs e)
     {
         if (_loadedSav == null) return;
 
@@ -89,19 +89,14 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private Task DisplayAlertAsync(string title, string message, string cancel)
-    {
-        return MainThread.InvokeOnMainThreadAsync(() => DisplayAlert(title, message, cancel));
-    }
-
-    private async void OnViewBoxesClicked(object sender, EventArgs e)
+    private async void OnViewBoxesClicked(object? sender, EventArgs e)
     {
         if (_loadedSav == null) return;
 
         await Navigation.PushAsync(new BoxViewerPage(_loadedSav));
     }
 
-    private async void OnLegalityCheckClicked(object sender, EventArgs e)
+    private async void OnLegalityCheckClicked(object? sender, EventArgs e)
     {
         if (_loadedSav == null) return;
 
