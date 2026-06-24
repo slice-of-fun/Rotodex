@@ -1,0 +1,94 @@
+@page "/events"
+@using Roto.Core
+
+<PageTitle>Event Database — RotoDex</PageTitle>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+    <h2 style="margin: 0;">Event Database</h2>
+    <div style="color: var(--text-secondary); font-size: 0.9rem;">@_allEvents.Count total events across all generations</div>
+</div>
+
+<!-- Filters -->
+<div class="glass-card" style="margin-bottom: 20px;">
+    <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center;">
+        <input @oninput="OnSearch"
+               placeholder="Search by name or species..."
+               style="background: rgba(0,0,0,0.3); border: 1px solid var(--surface-border); border-radius: 8px; color: white; padding: 10px 14px; font-family: inherit; font-size: 0.95rem; outline: none;" />
+        <select @bind="_genFilter"
+                style="background: #1e1e1e; border: 1px solid var(--surface-border); border-radius: 8px; color: white; padding: 10px 14px; font-family: inherit; cursor: pointer;">
+            <option value="0">All Gens</option>
+            <option value="4">Gen 4</option>
+            <option value="5">Gen 5</option>
+            <option value="6">Gen 6</option>
+            <option value="7">Gen 7</option>
+            <option value="8">Gen 8</option>
+            <option value="9">Gen 9</option>
+        </select>
+        <button class="btn btn-primary" @onclick="ApplyFilters">Filter</button>
+    </div>
+</div>
+
+<!-- Results -->
+@if (_filtered.Count == 0)
+{
+    <div class="glass-card" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+        No events found matching your search.
+    </div>
+}
+else
+{
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px;">
+        @foreach (var ev in _filtered.Take(200))
+        {
+            <div class="glass-card" style="padding: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <span style="font-weight: 700; font-size: 1rem;">@ev.CardTitle</span>
+                    <span style="background: rgba(98,0,238,0.4); border: 1px solid rgba(98,0,238,0.6); border-radius: 4px; padding: 2px 7px; font-size: 0.75rem; font-weight: 600; white-space: nowrap;">Gen @ev.Generation</span>
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 6px;">
+                    @((Species)ev.Species) — Lv.@ev.Level
+                </div>
+                <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">@ev.Type</div>
+            </div>
+        }
+    </div>
+
+    @if (_filtered.Count > 200)
+    {
+        <div style="text-align: center; margin-top: 20px; color: var(--text-secondary);">
+            Showing 200 of @_filtered.Count results. Refine your search to see more.
+        </div>
+    }
+}
+
+@code {
+    private List<MysteryGift> _allEvents = new();
+    private List<MysteryGift> _filtered = new();
+    private string _searchText = "";
+    private int _genFilter = 0;
+
+    protected override void OnInitialized()
+    {
+        _allEvents = EncounterEvent.GetAllEvents().ToList();
+        _filtered = _allEvents;
+    }
+
+    private void OnSearch(ChangeEventArgs e)
+    {
+        _searchText = e.Value?.ToString() ?? "";
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        var q = _searchText.Trim();
+        _filtered = _allEvents.Where(ev =>
+        {
+            bool matchesGen = _genFilter == 0 || ev.Generation == _genFilter;
+            bool matchesSearch = string.IsNullOrEmpty(q)
+                || ev.CardTitle.Contains(q, StringComparison.OrdinalIgnoreCase)
+                || ((Species)ev.Species).ToString().Contains(q, StringComparison.OrdinalIgnoreCase);
+            return matchesGen && matchesSearch;
+        }).ToList();
+    }
+}

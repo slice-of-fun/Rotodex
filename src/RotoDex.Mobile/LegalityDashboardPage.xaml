@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RotoDex.Mobile.LegalityDashboardPage"
+             Title="Legality Check"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto,*" Padding="15">
+        
+        <!-- Controls -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,15">
+            <Button x:Name="AnalyzeBtn" Text="Run Analysis" Clicked="OnAnalyzeClicked" BackgroundColor="#6200EE" TextColor="White" FontAttributes="Bold" CornerRadius="8" Padding="0,15" />
+            <ActivityIndicator x:Name="LoadingSpinner" IsRunning="False" IsVisible="False" Color="#03DAC6" HorizontalOptions="Center" />
+            <Label x:Name="StatusLabel" Text="Press 'Run Analysis' to check the save file for illegal Pokémon." TextColor="#aaaaaa" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <!-- Results Grid -->
+        <CollectionView Grid.Row="1" x:Name="ResultsGrid" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="#33ff0000" StrokeThickness="1" Background="#1aff0000" Padding="15">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnResultTapped" CommandParameter="{Binding Pokemon}" />
+                        </Border.GestureRecognizers>
+                        
+                        <VerticalStackLayout Spacing="5">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="{Binding DisplayName}" FontAttributes="Bold" TextColor="White" FontSize="16" />
+                                <Label Grid.Column="1" Text="{Binding Location}" TextColor="#aaaaaa" FontSize="12" />
+                            </Grid>
+                            
+                            <Label Text="{Binding Report}" TextColor="#ff6b6b" FontSize="12" LineBreakMode="WordWrap" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+    </Grid>
+</ContentPage>

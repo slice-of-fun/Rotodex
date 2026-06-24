@@ -1,0 +1,171 @@
+@page "/"
+@using Roto.Core
+@using System.IO
+@using RotoDex.Web.Services
+@inject SaveStateService SaveState
+@inject NavigationManager Nav
+
+<PageTitle>RotoDex Inspector</PageTitle>
+
+<div class="glass-card" style="margin-bottom: 30px; text-align: center;">
+    <h2>Inspect Save File</h2>
+    <p style="color: var(--text-secondary); margin-bottom: 20px;">
+        Select a Pokémon save file (.sav, .main, etc.) to view its contents. All processing happens locally in your browser.
+    </p>
+
+    <div style="padding: 30px; border: 2px dashed var(--surface-border); border-radius: 8px; background: rgba(0,0,0,0.2);">
+        <InputFile OnChange="@LoadSaveFile" style="color: white;" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div style="margin-top: 20px; padding: 15px; background-color: rgba(207, 102, 121, 0.2); border: 1px solid var(--error); border-radius: 8px; color: var(--error);">
+            @_errorMessage
+        </div>
+    }
+</div>
+
+@if (_loadedSav != null)
+{
+    <div class="glass-card">
+        <h3>Save Details</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.9rem;">Trainer Name</label>
+                <div style="font-size: 1.2rem; font-weight: bold;">@_loadedSav.OT</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.9rem;">Game Version</label>
+                <div style="font-size: 1.2rem; font-weight: bold;">@_loadedSav.Version</div>
+            </div>
+            <div>
+                <label style="color: var(--text-secondary); font-size: 0.9rem;">Play Time</label>
+                <div style="font-size: 1.2rem; font-weight: bold;">@($"{_loadedSav.PlayedHours:D2}:{_loadedSav.PlayedMinutes:D2}")</div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="/boxes" class="btn btn-primary">View PC Boxes →</a>
+        </div>
+    </div>
+
+    @if (_isScanning)
+    {
+        <div class="glass-card" style="margin-top: 20px; text-align: center;">
+            <p>Scanning PC boxes for legality...</p>
+        </div>
+    }
+    else if (_illegalPokemon != null)
+    {
+        <div class="glass-card" style="margin-top: 20px;">
+            <h3>Legality Report</h3>
+            @if (_illegalPokemon.Count == 0)
+            {
+                <div style="color: var(--success); margin-top: 10px;">✅ All Pokémon passed legality checks!</div>
+            }
+            else
+            {
+                <div style="color: var(--error); margin-bottom: 15px;">❌ Found @_illegalPokemon.Count illegal Pokémon.</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                    @foreach (var pk in _illegalPokemon)
+                    {
+                        <div style="background: rgba(207, 102, 121, 0.1); border: 1px solid var(--error); border-radius: 8px; padding: 15px;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">Box @pk.Box | Slot @pk.Slot</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px;">@pk.SpeciesName - "@pk.Nickname"</div>
+                            <div style="font-size: 0.85rem;">@pk.Report</div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+    private SaveFile? _loadedSav;
+    private string _errorMessage = "";
+
+    private async Task LoadSaveFile(InputFileChangeEventArgs e)
+    {
+        _errorMessage = "";
+        _loadedSav = null;
+
+        try
+        {
+            var file = e.File;
+            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024); // 10MB max
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            
+            var bytes = ms.ToArray();
+            _loadedSav = SaveUtil.GetSaveFile(bytes);
+
+            if (_loadedSav == null)
+            {
+                _errorMessage = "Failed to parse save file. Unsupported format.";
+            }
+            else
+            {
+                SaveState.SetSave(_loadedSav);
+                _ = AnalyzeSaveAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error reading file: {ex.Message}";
+        }
+    }
+
+    private bool _isScanning = false;
+    private List<IllegalPokemonViewModel>? _illegalPokemon;
+
+    private async Task AnalyzeSaveAsync()
+    {
+        _isScanning = true;
+        _illegalPokemon = null;
+        StateHasChanged();
+
+        // Run analysis on background thread so we don't freeze the browser UI
+        _illegalPokemon = await Task.Run(() =>
+        {
+            var results = new List<IllegalPokemonViewModel>();
+            if (_loadedSav == null) return results;
+
+            for (int b = 0; b < _loadedSav.BoxCount; b++)
+            {
+                var boxData = _loadedSav.GetBoxData(b);
+                for (int s = 0; s < boxData.Length; s++)
+                {
+                    var pkm = boxData[s];
+                    if (pkm.Species == 0 || !pkm.ChecksumValid) continue;
+
+                    var la = new LegalityAnalysis(pkm);
+                    if (!la.Valid)
+                    {
+                        results.Add(new IllegalPokemonViewModel
+                        {
+                            Box = b + 1,
+                            Slot = s + 1,
+                            SpeciesName = ((Species)pkm.Species).ToString(),
+                            Nickname = pkm.Nickname,
+                            Report = la.Report()
+                        });
+                    }
+                }
+            }
+            return results;
+        });
+
+        _isScanning = false;
+        StateHasChanged();
+    }
+
+    public class IllegalPokemonViewModel
+    {
+        public int Box { get; set; }
+        public int Slot { get; set; }
+        public string SpeciesName { get; set; } = "";
+        public string Nickname { get; set; } = "";
+        public string Report { get; set; } = "";
+    }
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RotoDex.Mobile.PokemonEditorPage"
+             Title="Edit Pokémon"
+             BackgroundColor="#121212">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+            
+            <!-- Main Info Card -->
+            <Border Stroke="#33ffffff" StrokeThickness="1" Background="#1affffff" Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Main Info" FontSize="18" FontAttributes="Bold" TextColor="White" />
+                    
+                    <Label Text="Nickname" TextColor="#aaaaaa" FontSize="12" />
+                    <Entry x:Name="NicknameEntry" TextColor="White" BackgroundColor="#22ffffff" />
+                    
+                    <Label Text="Species (ID)" TextColor="#aaaaaa" FontSize="12" />
+                    <Entry x:Name="SpeciesEntry" Keyboard="Numeric" TextColor="White" BackgroundColor="#22ffffff" />
+                    
+                    <Label Text="Level" TextColor="#aaaaaa" FontSize="12" />
+                    <Entry x:Name="LevelEntry" Keyboard="Numeric" TextColor="White" BackgroundColor="#22ffffff" />
+                    
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Met Data Card -->
+            <Border Stroke="#33ffffff" StrokeThickness="1" Background="#1affffff" Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Met Data" FontSize="18" FontAttributes="Bold" TextColor="White" />
+                    
+                    <Label Text="Original Trainer (OT)" TextColor="#aaaaaa" FontSize="12" />
+                    <Entry x:Name="OTEntry" TextColor="White" BackgroundColor="#22ffffff" />
+                    
+                    <Label Text="Origin Game (ID)" TextColor="#aaaaaa" FontSize="12" />
+                    <Entry x:Name="GameEntry" Keyboard="Numeric" TextColor="White" BackgroundColor="#22ffffff" />
+                    
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Stats Card -->
+            <Border Stroke="#33ffffff" StrokeThickness="1" Background="#1affffff" Padding="20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="15" />
+                </Border.StrokeShape>
+                
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Stats" FontSize="18" FontAttributes="Bold" TextColor="White" />
+                    
+                    <Label Text="Nature (ID)" TextColor="#aaaaaa" FontSize="12" />
+                    <Entry x:Name="NatureEntry" Keyboard="Numeric" TextColor="White" BackgroundColor="#22ffffff" />
+                    
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Import/Export -->
+            <Border Stroke="#33ffffff" StrokeThickness="1" Background="#1affffff" Padding="15" Margin="0,0,0,15">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Import/Export" FontAttributes="Bold" TextColor="White" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Import .pk*" Clicked="OnImportClicked" BackgroundColor="#03DAC6" TextColor="Black" FontAttributes="Bold" CornerRadius="8" />
+                        <Button Grid.Column="1" Text="Export .pk*" Clicked="OnExportClicked" BackgroundColor="#CF6679" TextColor="White" FontAttributes="Bold" CornerRadius="8" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Action Buttons -->
+            <Button Text="Save Changes" 
+                    Clicked="OnSaveChangesClicked"
+                    BackgroundColor="#6200EE" 
+                    TextColor="White" 
+                    CornerRadius="25" 
+                    HeightRequest="50" 
+                    FontAttributes="Bold" />
+                    
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

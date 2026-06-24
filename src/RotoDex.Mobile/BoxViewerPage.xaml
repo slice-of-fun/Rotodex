@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RotoDex.Mobile.BoxViewerPage"
+             Title="PC Boxes"
+             BackgroundColor="#121212">
+
+    <Grid RowDefinitions="Auto,*" Padding="10">
+        
+        <!-- Box Selector -->
+        <Border Grid.Row="0" Stroke="#33ffffff" StrokeThickness="1" Background="#1affffff" Padding="15,5" Margin="0,0,0,15">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10" />
+            </Border.StrokeShape>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <Button Grid.Column="0" Text="&lt;" Clicked="OnPreviousBoxClicked" BackgroundColor="Transparent" TextColor="White" FontAttributes="Bold" FontSize="20" />
+                <Label Grid.Column="1" x:Name="BoxNameLabel" Text="Box 1" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" FontSize="18" />
+                <Button Grid.Column="2" Text="&gt;" Clicked="OnNextBoxClicked" BackgroundColor="Transparent" TextColor="White" FontAttributes="Bold" FontSize="20" />
+            </Grid>
+        </Border>
+
+        <!-- Box Grid -->
+        <CollectionView Grid.Row="1" x:Name="BoxGrid" SelectionMode="None">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="6" VerticalItemSpacing="5" HorizontalItemSpacing="5" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border Stroke="#33ffffff" StrokeThickness="1" Background="{Binding BackgroundColor}" HeightRequest="60">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSlotTapped" CommandParameter="{Binding SlotIndex}" />
+                        </Border.GestureRecognizers>
+                        
+                        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="2">
+                            <Label Text="{Binding DisplayName}" FontSize="10" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding Details}" FontSize="9" TextColor="#aaaaaa" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+    </Grid>
+</ContentPage>

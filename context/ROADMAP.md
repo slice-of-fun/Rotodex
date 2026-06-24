@@ -103,7 +103,7 @@ A fully featured, beautiful desktop editor with legality analysis, backup, batch
 ### Deliverables
 
 - [x] `RotoDex.Bot` project scaffolded (Discord.NET)
-- [ ] Commands implemented:
+- [x] Commands implemented:
   - [x] `/check` — legality report for attached Pokémon file
   - [x] `/team` — team analysis
   - [x] `/generate` — generate a legal Pokémon
@@ -129,13 +129,13 @@ Bot is deployable and responds to all commands with accurate data.
 ### Deliverables
 
 - [x] `RotoDex.Mobile` project scaffolded (.NET MAUI)
-- [ ] Open save from device storage
-- [ ] View and edit Pokémon
-- [ ] Box management
-- [ ] Legality check display
-- [ ] Import / export `.pk*` files
-- [ ] Offline-first, no network required
-- [ ] Touch-optimized UI
+- [x] Open save from device storage
+- [x] View and edit Pokémon
+- [x] Box management
+- [x] Legality check display
+- [x] Import / export `.pk*` files
+- [x] Offline-first, no network required
+- [x] Touch-optimized UI
 
 ### Exit Criteria
 
@@ -149,12 +149,12 @@ Users can open, edit, and save Pokémon saves on Android without a desktop.
 
 ### Deliverables
 
-- [ ] `RotoDex.Web` project scaffolded (Blazor WASM)
-- [ ] Save inspection (no edit, read-only viewer)
-- [ ] Legality report display
-- [ ] Pokémon viewer
-- [ ] Team builder (import/export Showdown format)
-- [ ] Event database browser
+- [x] `RotoDex.Web` project scaffolded (Blazor WASM)
+- [x] Save inspection (no edit, read-only viewer)
+- [x] Legality report display
+- [x] Pokémon viewer
+- [x] Team builder (import/export Showdown format)
+- [x] Event database browser
 
 ### Exit Criteria
 

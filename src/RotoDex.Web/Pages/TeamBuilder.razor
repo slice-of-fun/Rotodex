@@ -1,0 +1,101 @@
+@page "/teambuilder"
+@using Roto.Core
+@using RotoDex.Web.Services
+@inject SaveStateService SaveState
+
+<PageTitle>Team Builder — RotoDex</PageTitle>
+
+<h2 style="margin-bottom: 20px;">Team Builder</h2>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;">
+
+    <!-- Import from Showdown -->
+    <div class="glass-card">
+        <h3>Import Showdown Sets</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Paste one or more Pokémon Showdown sets below.</p>
+        <textarea value="@_importText" @oninput="OnImportInput"
+                  placeholder="Paste Showdown sets here..."
+                  style="width: 100%; min-height: 200px; background: rgba(0,0,0,0.3); border: 1px solid var(--surface-border); border-radius: 8px; color: white; padding: 12px; font-family: monospace; font-size: 0.85rem; box-sizing: border-box; resize: vertical;"></textarea>
+        <button class="btn btn-primary" style="margin-top: 12px; width: 100%;" @onclick="ParseSets">Parse Sets</button>
+
+        @if (_parsedSets.Count > 0)
+        {
+            <div style="margin-top: 15px;">
+                <div style="color: var(--success); margin-bottom: 10px;">✅ Parsed @_parsedSets.Count set(s):</div>
+                @foreach (var set in _parsedSets)
+                {
+                    <div style="background: rgba(3,218,198,0.1); border: 1px solid var(--success); border-radius: 8px; padding: 12px; margin-bottom: 8px; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap;">@set.Text</div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Export from loaded save party -->
+    <div class="glass-card">
+        <h3>Export Party to Showdown</h3>
+        @if (SaveState.LoadedSav == null)
+        {
+            <p style="color: var(--text-secondary);">Load a save file on the <a href="/">Inspector</a> page to export your team.</p>
+        }
+        else
+        {
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Your current party exported in Showdown format.</p>
+            <button class="btn btn-primary" style="margin-bottom: 15px; width: 100%;" @onclick="ExportParty">Generate Showdown Export</button>
+
+            @if (!string.IsNullOrEmpty(_exportText))
+            {
+                <textarea readonly
+                          style="width: 100%; min-height: 220px; background: rgba(0,0,0,0.3); border: 1px solid var(--surface-border); border-radius: 8px; color: #03dac6; padding: 12px; font-family: monospace; font-size: 0.85rem; box-sizing: border-box; resize: vertical;">@_exportText</textarea>
+                <button class="btn" style="margin-top: 10px; width: 100%; background: rgba(255,255,255,0.1); color: white;" @onclick="CopyToClipboard">📋 Copy to Clipboard</button>
+                @if (_copied)
+                {
+                    <div style="color: var(--success); text-align: center; margin-top: 8px; font-size: 0.85rem;">Copied!</div>
+                }
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
+    private string _importText = "";
+    private List<ShowdownSet> _parsedSets = new();
+
+    private void OnImportInput(ChangeEventArgs e)
+    {
+        _importText = e.Value?.ToString() ?? "";
+    }
+
+    private string _exportText = "";
+    private bool _copied = false;
+
+    private void ParseSets()
+    {
+        _parsedSets = ShowdownParsing.GetShowdownSets(_importText).ToList();
+    }
+
+    private void ExportParty()
+    {
+        var sav = SaveState.LoadedSav;
+        if (sav == null) return;
+
+        var party = sav.PartyData;
+        var sets = party
+            .Where(pk => pk.Species != 0)
+            .Select(pk => new ShowdownSet(pk).Text);
+
+        _exportText = string.Join("\n\n", sets);
+        _copied = false;
+    }
+
+    private async Task CopyToClipboard()
+    {
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", _exportText);
+        _copied = true;
+        StateHasChanged();
+        await Task.Delay(2000);
+        _copied = false;
+        StateHasChanged();
+    }
+}
