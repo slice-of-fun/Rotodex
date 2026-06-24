@@ -1,7 +1,9 @@
 using Discord;
 using Discord.Interactions;
+using RotoDex.Analyzer.Models;
 using RotoDex.Core;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -67,10 +69,10 @@ public class PokemonModule : InteractionModuleBase<SocketInteractionContext>
                 embed.WithThumbnailUrl($"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{pokemon.Species}.png");
             }
 
-            void AddFieldIfAny(string name, System.Collections.Generic.List<string> checks)
+            void AddFieldIfAny(string name, System.Collections.Generic.List<RotoDex.Analyzer.Models.AnalyzerCheckResult> checks)
             {
                 if (checks.Count > 0)
-                    embed.AddField(name, string.Join("\n", checks));
+                    embed.AddField(name, string.Join("\n", checks.Select(c => (c.Valid ? "✅" : "❌") + " " + c.Message)));
             }
 
             AddFieldIfAny("Origin", report.OriginChecks);
@@ -130,9 +132,9 @@ public class PokemonModule : InteractionModuleBase<SocketInteractionContext>
                 if (!report.IsLegal)
                 {
                     var errors = new System.Collections.Generic.List<string>();
-                    errors.AddRange(report.EncounterChecks);
-                    errors.AddRange(report.MoveChecks);
-                    errors.AddRange(report.MiscChecks);
+                    errors.AddRange(report.EncounterChecks.Select(c => c.Message));
+                    errors.AddRange(report.MoveChecks.Select(c => c.Message));
+                    errors.AddRange(report.MiscChecks.Select(c => c.Message));
                     if (errors.Count > 0)
                         details = " (" + string.Join(", ", errors) + ")";
                 }
