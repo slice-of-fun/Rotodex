@@ -1,0 +1,6 @@
+[submodule "upstream_lore"]
+	path = upstream_lore
+	url = https://github.com/PokeAPI/pokeapi.git
+[submodule "upstream_pkhex"]
+	path = upstream_pkhex
+	url = https://github.com/kwsch/PKHeX.git
