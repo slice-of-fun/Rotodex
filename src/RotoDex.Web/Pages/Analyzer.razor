@@ -14,7 +14,7 @@
 </div>
 
 <!-- Drag and Drop Area -->
-<div class="glass-card" style="padding: 40px; text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; margin-bottom: 24px; position: relative;" @ondragover:preventDefault @ondragover="OnDragOver" @ondragleave="OnDragLeave" @ondrop:preventDefault @ondrop="OnDrop">
+<div class="glass-card" style="padding: 40px; text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; margin-bottom: 24px; position: relative;" @ondragover:preventDefault @ondrop:preventDefault @ondrop="OnDrop">
     <div style="pointer-events: none;">
         <div style="font-size: 3rem; margin-bottom: 12px; opacity: 0.8;">🔍</div>
         <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px;">Drop a Pokémon file here</div>
@@ -147,7 +147,6 @@
 
     private async Task OnDrop(DragEventArgs e)
     {
-        _isDragging = false;
         // In Blazor WASM, drop events with files can be tricky without InputFile.
         // InputFile covers the fallback click anyway, so let's rely on InputFile's OnChange.
     }
