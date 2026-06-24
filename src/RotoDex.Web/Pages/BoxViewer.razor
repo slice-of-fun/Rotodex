@@ -2,6 +2,7 @@
 @using Roto.Core
 @using RotoDex.Web.Services
 @inject SaveStateService SaveState
+@inject VaultService Vault
 @inject NavigationManager Nav
 
 <PageTitle>PC Box Viewer — RotoDex</PageTitle>
@@ -26,13 +27,20 @@ else
         </div>
     </div>
 
+    @if (!string.IsNullOrEmpty(_depositFeedback))
+    {
+        <div style="margin-bottom: 12px; padding: 10px 16px; background: rgba(3,218,198,0.15); border: 1px solid var(--success); border-radius: 8px; color: var(--success); font-size: 0.9rem;">
+            @_depositFeedback &mdash; <a href="/vault" style="color: var(--success);">View Vault</a>
+        </div>
+    }
+
     <div class="glass-card">
         <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;">
             @for (int i = 0; i < _slots.Length; i++)
             {
                 var slot = _slots[i];
                 var isEmpty = slot.Species == 0;
-                <div style="@(isEmpty ? "background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1);" : "background: rgba(98,0,238,0.2); border: 1px solid rgba(98,0,238,0.5);") border-radius: 8px; padding: 8px; min-height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s;">
+                <div style="@(isEmpty ? "background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1);" : "background: rgba(98,0,238,0.2); border: 1px solid rgba(98,0,238,0.5);") border-radius: 8px; padding: 8px; min-height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s; gap: 4px;">
                     @if (!isEmpty)
                     {
                         <div style="font-size: 0.75rem; color: var(--text-secondary);">
@@ -41,9 +49,11 @@ else
                         <div style="font-size: 0.85rem; font-weight: 600; text-align: center;">
                             @((Species)slot.Species)
                         </div>
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">
                             Lv.@slot.CurrentLevel
                         </div>
+                        <button style="margin-top: 4px; font-size: 0.65rem; padding: 2px 8px; background: rgba(3,218,198,0.2); border: 1px solid var(--success); border-radius: 4px; color: var(--success); cursor: pointer; font-family: inherit;"
+                                @onclick="() => DepositSlot(slot)">📦 Vault</button>
                     }
                 </div>
             }
@@ -55,11 +65,23 @@ else
     private int _currentBox = 0;
     private PKM[] _slots = Array.Empty<PKM>();
     private string _boxName = "";
+    private string _depositFeedback = "";
 
     protected override void OnInitialized()
     {
         if (SaveState.LoadedSav != null)
             LoadBox();
+    }
+
+    private async Task DepositSlot(PKM pkm)
+    {
+        await Vault.EnsureLoadedAsync();
+        await Vault.DepositAsync(pkm);
+        _depositFeedback = $"{(Species)pkm.Species} deposited to Vault!";
+        StateHasChanged();
+        await Task.Delay(2500);
+        _depositFeedback = "";
+        StateHasChanged();
     }
 
     private void LoadBox()

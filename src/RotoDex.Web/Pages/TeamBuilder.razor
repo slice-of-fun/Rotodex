@@ -2,6 +2,7 @@
 @using Roto.Core
 @using RotoDex.Web.Services
 @inject SaveStateService SaveState
+@inject AiService AI
 
 <PageTitle>Team Builder — RotoDex</PageTitle>
 
@@ -56,6 +57,32 @@
     </div>
 </div>
 
+@if (!string.IsNullOrWhiteSpace(_importText) || !string.IsNullOrWhiteSpace(_exportText))
+{
+    <div class="glass-card" style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0; display: flex; align-items: center; gap: 8px;"><span>🧠</span> AI Team Analysis</h3>
+            <button class="btn btn-primary" @onclick="AnalyzeTeam" disabled="@_isAnalyzing">
+                @if (_isAnalyzing)
+                {
+                    <span>Thinking...</span>
+                }
+                else
+                {
+                    <span>Analyze Current Team</span>
+                }
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(_aiAnalysisText))
+        {
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--surface-border); border-radius: 8px; padding: 20px; color: #a1dffb; font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap;">
+                @_aiAnalysisText
+            </div>
+        }
+    </div>
+}
+
 @code {
     [Inject] IJSRuntime JS { get; set; } = default!;
 
@@ -96,6 +123,22 @@
         StateHasChanged();
         await Task.Delay(2000);
         _copied = false;
+        StateHasChanged();
+    }
+
+    private bool _isAnalyzing = false;
+    private string _aiAnalysisText = "";
+
+    private async Task AnalyzeTeam()
+    {
+        _isAnalyzing = true;
+        _aiAnalysisText = "";
+        StateHasChanged();
+
+        var teamData = !string.IsNullOrWhiteSpace(_importText) ? _importText : _exportText;
+        _aiAnalysisText = await AI.SuggestTeamImprovementsAsync(teamData);
+
+        _isAnalyzing = false;
         StateHasChanged();
     }
 }

@@ -1,0 +1,193 @@
+@page "/analyzer"
+@using Roto.Core
+@using RotoDex.Analyzer
+@using RotoDex.Analyzer.Models
+@using System.IO
+@using RotoDex.Web.Services
+@inject AiService AI
+@inject IJSRuntime JS
+
+<PageTitle>Advanced Analyzer — RotoDex</PageTitle>
+
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+    <h2 style="margin: 0;">Advanced Analyzer</h2>
+</div>
+
+<!-- Drag and Drop Area -->
+<div class="glass-card" style="padding: 40px; text-align: center; border: 2px dashed rgba(255,255,255,0.2); cursor: pointer; margin-bottom: 24px; position: relative;" @ondragover:preventDefault @ondragover="OnDragOver" @ondragleave="OnDragLeave" @ondrop:preventDefault @ondrop="OnDrop">
+    <div style="pointer-events: none;">
+        <div style="font-size: 3rem; margin-bottom: 12px; opacity: 0.8;">🔍</div>
+        <div style="font-size: 1.2rem; font-weight: 600; margin-bottom: 8px;">Drop a Pokémon file here</div>
+        <div style="font-size: 0.9rem; color: var(--text-secondary);">Supports .pk* files from any generation</div>
+    </div>
+    
+    <!-- Hidden File Input for click-to-upload fallback -->
+    <InputFile OnChange="LoadFiles" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" />
+</div>
+
+@if (_pkm != null && _report != null)
+{
+    <!-- Report Header -->
+    <div class="glass-card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; padding: 20px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <div style="width: 50px; height: 50px; border-radius: 25px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                @((Species)_pkm.Species)
+            </div>
+            <div>
+                <div style="font-size: 1.2rem; font-weight: 700;">
+                    @(string.IsNullOrEmpty(_pkm.Nickname) ? ((Species)_pkm.Species).ToString() : _pkm.Nickname)
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                    Lv. @_pkm.CurrentLevel · OT: @_pkm.OriginalTrainerName
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            @if (_report.IsLegal)
+            {
+                <span style="background: rgba(3,218,198,0.2); border: 1px solid var(--success); color: var(--success); padding: 6px 12px; border-radius: 8px; font-weight: 600;">
+                    ✅ Legal
+                </span>
+            }
+            else
+            {
+                <span style="background: rgba(207,102,121,0.2); border: 1px solid var(--error); color: var(--error); padding: 6px 12px; border-radius: 8px; font-weight: 600;">
+                    ❌ Illegal
+                </span>
+            }
+        </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 40px;">
+        
+        <!-- Path Checks -->
+        @if (_report.PathChecks.Any())
+        {
+            <div class="glass-card" style="padding: 16px;">
+                <h4 style="margin-top: 0; margin-bottom: 12px; font-size: 1rem; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                    <span>🗺️</span> Generation Path
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    @foreach (var check in _report.PathChecks)
+                    {
+                        <div style="display: flex; gap: 8px; align-items: flex-start; font-size: 0.9rem; padding: 6px 10px; background: rgba(0,0,0,0.2); border-radius: 6px; border-left: 3px solid @(check.Valid ? "var(--success)" : "var(--error)");">
+                            <div>@(check.Valid ? "✅" : "❌")</div>
+                            <div style="word-break: break-word;">@check.Message</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Render check category block helper -->
+        @{
+            RenderFragment RenderCheckCategory(string title, string emoji, List<AnalyzerCheckResult> checks) => __builder =>
+            {
+                if (checks.Any())
+                {
+                    <div class="glass-card" style="padding: 16px;">
+                        <h4 style="margin-top: 0; margin-bottom: 12px; font-size: 1rem; color: var(--text-secondary); display: flex; align-items: center; gap: 8px;">
+                            <span>@emoji</span> @title
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            @foreach (var check in checks)
+                            {
+                                <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 6px; border-left: 3px solid @(check.Valid ? "var(--success)" : "var(--error)");">
+                                    <div style="display: flex; gap: 8px; align-items: flex-start; justify-content: space-between;">
+                                        <div style="display: flex; gap: 8px;">
+                                            <div>@(check.Valid ? "✅" : "❌")</div>
+                                            <div style="word-break: break-word;">@check.Message</div>
+                                        </div>
+                                        <button class="btn btn-sm" style="font-size: 0.8rem; padding: 2px 8px;" @onclick="() => ExplainCheck(check)">
+                                            🧠 Explain
+                                        </button>
+                                    </div>
+                                    @if (_explanations.ContainsKey(check))
+                                    {
+                                        <div style="margin-top: 8px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; font-style: italic; color: #a1dffb; font-size: 0.85rem;">
+                                            @_explanations[check]
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            };
+        }
+
+        @RenderCheckCategory("Encounter & Origin", "🌍", _report.OriginChecks.Concat(_report.EncounterChecks).ToList())
+        @RenderCheckCategory("Stats & Nature", "📈", _report.StatsChecks)
+        @RenderCheckCategory("Moves", "⚔️", _report.MoveChecks)
+        @RenderCheckCategory("PID & Crypto", "🔐", _report.PIDChecks)
+        @RenderCheckCategory("Ribbons", "🎀", _report.RibbonChecks)
+        @RenderCheckCategory("Poké Ball", "🔴", _report.BallChecks)
+        @RenderCheckCategory("Misc", "⚙️", _report.MiscChecks)
+    </div>
+}
+
+@code {
+    private bool _isDragging;
+    private PKM? _pkm;
+    private AnalyzerReport? _report;
+    private string _errorMessage = "";
+    private Dictionary<AnalyzerCheckResult, string> _explanations = new();
+
+    private void OnDragOver() => _isDragging = true;
+    private void OnDragLeave() => _isDragging = false;
+
+    private async Task ExplainCheck(AnalyzerCheckResult check)
+    {
+        if (_pkm == null) return;
+
+        _explanations[check] = "Thinking...";
+        StateHasChanged();
+
+        var exp = await AI.ExplainLegalityAsync(_pkm, check);
+        _explanations[check] = exp;
+        StateHasChanged();
+    }
+
+    private async Task OnDrop(DragEventArgs e)
+    {
+        _isDragging = false;
+        // In Blazor WASM, drop events with files can be tricky without InputFile.
+        // InputFile covers the fallback click anyway, so let's rely on InputFile's OnChange.
+    }
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            _errorMessage = "";
+            var file = e.File;
+            if (file.Size > 1024 * 1024)
+            {
+                _errorMessage = "File too large.";
+                return;
+            }
+
+            using var stream = file.OpenReadStream();
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var data = ms.ToArray();
+
+            _pkm = EntityFormat.GetFromBytes(data);
+            if (_pkm == null)
+            {
+                _errorMessage = "Invalid Pokémon file.";
+                return;
+            }
+
+            // Generate report
+            _report = LegalityReportGenerator.Generate(_pkm);
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error analyzing file: {ex.Message}";
+            _pkm = null;
+            _report = null;
+        }
+    }
+}

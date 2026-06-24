@@ -1,0 +1,128 @@
+@page "/vault"
+@using Roto.Core
+@using RotoDex.Web.Services
+@inject VaultService VaultSvc
+@inject IJSRuntime JS
+
+<PageTitle>Vault — RotoDex</PageTitle>
+
+@if (!_loaded)
+{
+    <div style="text-align: center; padding: 60px; color: var(--text-secondary);">Loading vault...</div>
+}
+else
+{
+    <!-- Header row -->
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="margin: 0;">RotoDex Vault</h2>
+        <div style="color: var(--text-secondary); font-size: 0.9rem;">@VaultSvc.Entries.Count Pokémon stored</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="glass-card" style="margin-bottom: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center;">
+            <input @oninput="OnSearch"
+                   placeholder="Search by species, nickname, or OT..."
+                   style="background: rgba(0,0,0,0.3); border: 1px solid var(--surface-border); border-radius: 8px; color: white; padding: 10px 14px; font-family: inherit; font-size: 0.95rem; outline: none;" />
+            <select @bind="_collectionFilter"
+                    style="background: #1e1e1e; border: 1px solid var(--surface-border); border-radius: 8px; color: white; padding: 10px 14px; font-family: inherit; cursor: pointer; min-width: 140px;">
+                <option value="">All Collections</option>
+                @foreach (var col in VaultSvc.Collections)
+                {
+                    <option value="@col">@col</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    var results = VaultSvc.Query(_searchText, _collectionFilter).ToList();
+
+    if (results.Count == 0)
+    {
+        <div class="glass-card" style="text-align: center; padding: 60px; color: var(--text-secondary);">
+            @if (VaultSvc.Entries.Count == 0)
+            {
+                <div>
+                    <div style="font-size: 2rem; margin-bottom: 12px;">📦</div>
+                    <div style="font-size: 1.1rem; margin-bottom: 8px;">Your vault is empty.</div>
+                    <div style="font-size: 0.9rem;">Go to <a href="/boxes">PC Boxes</a> and deposit Pokémon here.</div>
+                </div>
+            }
+            else
+            {
+                <span>No Pokémon match your search.</span>
+            }
+        </div>
+    }
+    else
+    {
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px;">
+            @foreach (var entry in results)
+            {
+                <div class="glass-card" style="padding: 15px; display: flex; flex-direction: column; gap: 8px; position: relative;">
+                    <!-- Collection badge -->
+                    <div style="position: absolute; top: 12px; right: 12px; background: rgba(98,0,238,0.4); border: 1px solid rgba(98,0,238,0.6); border-radius: 4px; padding: 2px 7px; font-size: 0.7rem; font-weight: 600;">
+                        @entry.Collection
+                    </div>
+
+                    <div>
+                        <div style="font-weight: 700; font-size: 1rem; padding-right: 70px;">@entry.SpeciesName</div>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">
+                            @(string.IsNullOrEmpty(entry.Nickname) ? "" : $"\"{entry.Nickname}\" · ")OT: @entry.OT
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+                        <span>Lv.@entry.Level</span>
+                        <span style="text-transform: uppercase; font-size: 0.75rem; opacity: 0.7;">.@entry.Format</span>
+                        <span style="margin-left: auto; font-size: 0.75rem; opacity: 0.6;">@entry.DateAdded.ToLocalTime().ToString("MMM d")</span>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <button class="btn btn-primary" style="flex: 1; font-size: 0.8rem; padding: 7px;" @onclick="() => DownloadEntry(entry)">
+                            ⬇ Download
+                        </button>
+                        <button class="btn btn-danger" style="font-size: 0.8rem; padding: 7px 12px;" @onclick="() => RemoveEntry(entry.Id)">
+                            🗑
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@code {
+    private bool _loaded = false;
+    private string _searchText = "";
+    private string _collectionFilter = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        VaultSvc.OnChange += StateHasChanged;
+        await VaultSvc.EnsureLoadedAsync();
+        _loaded = true;
+    }
+
+    public void Dispose()
+    {
+        VaultSvc.OnChange -= StateHasChanged;
+    }
+
+    private void OnSearch(ChangeEventArgs e)
+    {
+        _searchText = e.Value?.ToString() ?? "";
+    }
+
+    private async Task DownloadEntry(VaultEntry entry)
+    {
+        // Trigger browser download via JS
+        await JS.InvokeVoidAsync("downloadFile", entry.Nickname.Length > 0 ? entry.Nickname : entry.SpeciesName, entry.Format, entry.Base64Data);
+    }
+
+    private async Task RemoveEntry(string id)
+    {
+        await VaultSvc.RemoveAsync(id);
+    }
+}

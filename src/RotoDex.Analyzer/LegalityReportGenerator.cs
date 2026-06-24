@@ -16,34 +16,35 @@ public static class LegalityReportGenerator
         foreach (var result in analysis.Results)
         {
             var message = context.Humanize(result, verbose: false);
+            var cr = new AnalyzerCheckResult { Valid = result.Valid, Message = message };
 
             switch (result.Identifier)
             {
                 case CheckIdentifier.GameOrigin:
                 case CheckIdentifier.Evolution:
                 case CheckIdentifier.Geography:
-                    report.OriginChecks.Add(message);
+                    report.OriginChecks.Add(cr);
                     break;
                 
                 case CheckIdentifier.Encounter:
                 case CheckIdentifier.Fateful:
                 case CheckIdentifier.Egg:
-                    report.EncounterChecks.Add(message);
+                    report.EncounterChecks.Add(cr);
                     break;
                 
                 case CheckIdentifier.Ball:
-                    report.BallChecks.Add(message);
+                    report.BallChecks.Add(cr);
                     break;
                 
                 case CheckIdentifier.CurrentMove:
                 case CheckIdentifier.RelearnMove:
-                    report.MoveChecks.Add(message);
+                    report.MoveChecks.Add(cr);
                     break;
                 
                 case CheckIdentifier.Ribbon:
                 case CheckIdentifier.RibbonMark:
                 case CheckIdentifier.Marking:
-                    report.RibbonChecks.Add(message);
+                    report.RibbonChecks.Add(cr);
                     break;
                 
                 case CheckIdentifier.EVs:
@@ -55,17 +56,17 @@ public static class LegalityReportGenerator
                 case CheckIdentifier.Ability:
                 case CheckIdentifier.Form:
                 case CheckIdentifier.Gender:
-                    report.StatsChecks.Add(message);
+                    report.StatsChecks.Add(cr);
                     break;
 
                 case CheckIdentifier.PID:
                 case CheckIdentifier.EC:
                 case CheckIdentifier.Shiny:
-                    report.PIDChecks.Add(message);
+                    report.PIDChecks.Add(cr);
                     break;
                 
                 default:
-                    report.MiscChecks.Add(message);
+                    report.MiscChecks.Add(cr);
                     break;
             }
         }
@@ -82,7 +83,7 @@ public static class LegalityReportGenerator
         
         if (originGen == currentGen)
         {
-            report.PathChecks.Add($"Caught in Gen {originGen} ({GameInfo.GetVersionName(pkm.Version)}).");
+            report.PathChecks.Add(new AnalyzerCheckResult { Valid = true, Message = $"Caught in Gen {originGen} ({GameInfo.GetVersionName(pkm.Version)})." });
             return;
         }
 
@@ -97,14 +98,14 @@ public static class LegalityReportGenerator
         
         path.Add($"Gen {currentGen}");
         
-        report.PathChecks.Add(string.Join(" → ", path));
+        report.PathChecks.Add(new AnalyzerCheckResult { Valid = true, Message = string.Join(" → ", path) });
 
         // Validate HOME Tracker if moved to Gen 8+
         if (currentGen >= 8 && originGen < currentGen && pkm is Roto.Core.IHomeTrack homeTrack)
         {
             if (!homeTrack.HasTracker)
             {
-                report.PathChecks.Add("❌ Invalid Transfer: Missing HOME Tracker for cross-generation migration.");
+                report.PathChecks.Add(new AnalyzerCheckResult { Valid = false, Message = "Invalid Transfer: Missing HOME Tracker for cross-generation migration." });
                 report.IsLegal = false;
             }
         }

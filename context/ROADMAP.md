@@ -168,14 +168,14 @@ Core web tools are accessible in a modern browser with no install required.
 
 ### Deliverables
 
-- [ ] **RotoDex Vault** — local Pokémon archive (boxes, teams, collections)
-- [ ] **RotoDex Events** — full searchable event / Mystery Gift history
-- [ ] **Advanced Analyzer** — full generation path and validity explanation
-- [ ] **AI Layer** (optional)
-  - [ ] Team builder suggestions
-  - [ ] Legality explanation in plain language
-  - [ ] Pokémon improvement suggestions
-  - [ ] Must not replace any core editing functionality
+- [x] **RotoDex Vault** — local Pokémon archive (boxes, teams, collections)
+- [x] **Event Database** — offline Mystery Gift searching and injection
+- [x] **Advanced Analyzer** — full generation path and validity explanation
+- [x] **AI Layer**
+  - [x] Team builder suggestions
+  - [x] Legality explanation in plain language
+  - [x] Pokémon improvement suggestions
+  - [x] Must not replace any core editing functionality
 
 ### Exit Criteria
 
