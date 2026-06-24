@@ -1117,6 +1117,17 @@ public partial class Main : Form
             page.Buttons.Add(clipboard);
         }
 
+        var aiExplainButton = new TaskDialogButton("Explain with AI") { AllowCloseDialog = false };
+        aiExplainButton.Click += async (s, e) =>
+        {
+            aiExplainButton.Enabled = false;
+            var speciesName = GameInfo.Strings.Species[la.Info.Entity.Species];
+            var aiResponse = await AiApiClient.ExplainLegalityAsync(speciesName, la.Valid, simpleReport);
+            WinFormsUtil.Alert("AI Explanation:\n\n" + aiResponse);
+            aiExplainButton.Enabled = true;
+        };
+        page.Buttons.Add(aiExplainButton);
+
         TaskDialog.ShowDialog(this, page);
     }
 

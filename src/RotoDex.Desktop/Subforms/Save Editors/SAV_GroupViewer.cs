@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -62,6 +62,34 @@ public sealed partial class SAV_GroupViewer : Form
             };
         }
         FormClosing += (_, _) => Preview.Clear();
+
+        var aiTeamAnalysisItem = new ToolStripMenuItem("AI Team Analysis");
+        aiTeamAnalysisItem.Click += async (_, _) =>
+        {
+            aiTeamAnalysisItem.Enabled = false;
+            var group = Groups[CurrentGroup];
+            var validSlots = group.Slots.Where(p => p.Species != 0).Take(6).ToList();
+            if (validSlots.Count == 0)
+            {
+                WinFormsUtil.Alert("No valid Pokémon in this group for analysis.");
+                aiTeamAnalysisItem.Enabled = true;
+                return;
+            }
+
+            var lines = new List<string>();
+            foreach (var pk in validSlots)
+            {
+                lines.Add(new ShowdownSet(pk).Text);
+                lines.Add("");
+            }
+            var showdownText = string.Join(Environment.NewLine, lines);
+
+            var aiResponse = await AiApiClient.AnalyzeTeamAsync(showdownText);
+            WinFormsUtil.Alert("AI Team Analysis:\n\n" + aiResponse);
+            aiTeamAnalysisItem.Enabled = true;
+        };
+        mnu.Items.Add(new ToolStripSeparator());
+        mnu.Items.Add(aiTeamAnalysisItem);
     }
 
     private void HoverSlot(PictureBox pb)
