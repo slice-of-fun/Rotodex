@@ -1,27 +1,30 @@
 # Upstream Strategy
 
-RotoDex uses [PKHeX](https://github.com/kwsch/PKHeX) as its authoritative Pokémon engine. This document explains the relationship, the synchronization strategy, and how RotoDex stays current with upstream changes automatically.
+RotoDex uses a **Dual-Upstream Strategy** to acquire its data without reinventing the wheel:
+1. **Core Engine**: [PKHeX](https://github.com/kwsch/PKHeX) is the authoritative engine for save editing, legality, and battle mechanics.
+2. **Lore Encyclopedia**: [PokeAPI](https://github.com/PokeAPI/pokeapi) is the authoritative source for rich UI data like flavor text, complex evolutions, and high-quality sprites.
+
+This document explains the synchronization strategy and how RotoDex stays current with both upstream sources automatically.
 
 ---
 
 ## The Relationship
 
-RotoDex does **not** fork PKHeX.
+RotoDex does **not** fork its upstreams. RotoDex does **not** modify their source code or raw data files.
 
-RotoDex does **not** modify PKHeX source code.
-
-PKHeX is cloned directly from source and undergoes a renaming process before being integrated. RotoDex builds on top of it through the Adapter layer.
+They are cloned directly from source:
+- `upstream_pkhex/` undergoes a renaming process to become `Roto.Core`.
+- `upstream_lore/` provides raw CSVs that are processed offline.
 
 ```
 PKHeX (Clone & Rename) ──► RotoDex.Adapter ──► RotoDex.Core ──► Applications
+PokeAPI (Raw CSV Clone) ─► Lore.Dumper ──────► RotoDex.Core (Optional Extension)
 ```
 
 This means:
-
-- PKHeX updates flow in automatically
-- PKHeX bug fixes are inherited for free
-- New game support arrives without RotoDex code changes (in most cases)
-- RotoDex never diverges from upstream's Pokémon logic
+- Updates flow in automatically via Git.
+- New game support and new Pokedex lore arrive without RotoDex code changes.
+- RotoDex maintains 100% architectural independence.
 
 ---
 
@@ -75,29 +78,17 @@ This prevents a broken PKHeX update from shipping to end users.
 
 ## Upstream Resource Dumping
 
-Beyond the engine itself, PKHeX's repository contains raw resource data that RotoDex also benefits from:
+Beyond the engine itself, the upstream repositories contain raw resource data:
+- **From PKHeX**: Encounter tables, learnsets, game constants, ability names.
+- **From PokeAPI**: Pokedex flavor text, sprite mappings, evolution chains.
 
-```
-Encounter tables
-Learnsets
-Mystery Gift event files
-Species personal data
-Location name tables
-Ability name tables
-Move name tables
-Game constants
-```
-
-These are dumped using the **UpstreamDumper tool** (`tools/UpstreamDumper`) and stored in the `resources/` directory of RotoDex.
+These are dumped using two specialized offline tools: `tools/Roto.Dumper` (for Core) and `tools/Lore.Dumper` (for PokeAPI data).
 
 ### Dump Workflow
 
 ```
-PKHeX Repository (git clone or submodule reference)
-        ↓
-UpstreamDumper extracts and transforms resources
-        ↓
-Resources written to resources/ as flat files
+PKHeX Repo ──► Roto.Dumper ──► resources/Core/ JSONs
+PokeAPI Repo ─► Lore.Dumper ──► resources/Lore/ JSONs + link.json
         ↓
 ResourceManager loads them into memory at runtime
         ↓
@@ -107,9 +98,12 @@ Applications consume data through ResourceManager
 ### Triggering Resource Dumps
 
 Resource dumps run:
-
-- Automatically as part of the upstream monitoring workflow when a PKHeX update is detected
-- Manually via `dotnet run --project tools/UpstreamDumper`
+- Automatically as part of the upstream monitoring workflow when an update is detected.
+- Manually via:
+  ```bash
+  dotnet run --project tools/Roto.Dumper
+  dotnet run --project tools/Lore.Dumper
+  ```
 
 ---
 

@@ -12,6 +12,12 @@ public class PokemonAdapter : IPokemon
         _pkm = pkm ?? throw new ArgumentNullException(nameof(pkm));
     }
 
+    public static IPokemon? Parse(byte[] data)
+    {
+        var pk = EntityFormat.GetFromBytes(data);
+        return pk == null ? null : new PokemonAdapter(pk);
+    }
+
     public ushort Species 
     { 
         get => _pkm.Species; 

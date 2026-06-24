@@ -53,12 +53,16 @@ A user can open a save file, edit a Pokémon, and write the save back — offlin
 
 ### Deliverables
 
-- [x] Upstream Dumper tool (`tools/Roto.Dumper`)
-  - [x] Dump encounters from PKHeX
-  - [x] Dump learnsets
-  - [x] Dump Mystery Gifts
-  - [x] Dump personal data
-- [x] `ResourceManager` in Core consumes dumped files
+- [x] Upstream Dumper tools
+  - [x] `tools/Roto.Dumper` (PKHeX core data)
+    - [x] Dump encounters from PKHeX
+    - [x] Dump learnsets
+    - [x] Dump Mystery Gifts
+    - [x] Dump personal data
+  - [x] `tools/Lore.Dumper` (PokeAPI data)
+    - [x] Dump flavor text and sprites
+    - [x] Generate `link.json` map
+- [x] `ResourceManager` in Core consumes dumped files (Lore data)
 - [x] `RotoDex.Analyzer` — human-readable legality explanations
   - [x] Origin game
   - [x] Encounter method
@@ -98,15 +102,19 @@ A fully featured, beautiful desktop editor with legality analysis, backup, batch
 
 ### Deliverables
 
-- [ ] `RotoDex.Bot` project scaffolded (Discord.NET)
+- [x] `RotoDex.Bot` project scaffolded (Discord.NET)
 - [ ] Commands implemented:
-  - [ ] `/check` — legality report for attached Pokémon file
-  - [ ] `/team` — team analysis
-  - [ ] `/generate` — generate a legal Pokémon
-  - [ ] `/compare` — compare two Pokémon files
-  - [ ] `/eventdex` — look up event distributions
-- [ ] Bot consumes `RotoDex.Core` only
-- [ ] Deployment documentation
+  - [x] `/check` — legality report for attached Pokémon file
+  - [x] `/team` — team analysis
+  - [x] `/generate` — generate a legal Pokémon
+  - [x] `/compare` — compare two Pokémon files
+  - [x] `/eventdex` — look up event distributions
+- [x] Bot consumes `RotoDex.Core` only
+- [x] Bot utilizes `PokeAPI/Lore` data for rich embeds
+  - [x] Load `resources/Lore/` assets
+  - [x] Render high-quality sprites in legality report
+  - [x] Append flavor text to reports
+- [x] Deployment documentation
 
 ### Exit Criteria
 
@@ -120,7 +128,7 @@ Bot is deployable and responds to all commands with accurate data.
 
 ### Deliverables
 
-- [ ] `RotoDex.Mobile` project scaffolded (.NET MAUI)
+- [x] `RotoDex.Mobile` project scaffolded (.NET MAUI)
 - [ ] Open save from device storage
 - [ ] View and edit Pokémon
 - [ ] Box management

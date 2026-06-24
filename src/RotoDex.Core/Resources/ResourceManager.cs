@@ -12,8 +12,10 @@ public static class ResourceManager
     private static List<EncounterModel> _encounters = new();
     private static List<LearnsetModel> _learnsets = new();
     private static List<PersonalDataModel> _personalData = new();
+    private static Dictionary<int, string> _flavorTexts = new();
 
     public static bool IsInitialized { get; private set; }
+    public static bool HasLore { get; private set; }
 
     public static void Initialize(string resourceDirectory)
     {
@@ -35,11 +37,30 @@ public static class ResourceManager
             _learnsets = JsonSerializer.Deserialize<List<LearnsetModel>>(json, options) ?? new();
         }
 
-        var personalPath = Path.Combine(resourceDirectory, "personal_data.json");
+        var personalPath = Path.Combine(resourceDirectory, "Core", "personal_data.json");
+        if (!File.Exists(personalPath)) personalPath = Path.Combine(resourceDirectory, "personal_data.json");
         if (File.Exists(personalPath))
         {
             var json = File.ReadAllText(personalPath);
             _personalData = JsonSerializer.Deserialize<List<PersonalDataModel>>(json, options) ?? new();
+        }
+
+        // Soft-dependency for Lore
+        var flavorPath = Path.Combine(resourceDirectory, "..", "Lore", "flavor_text.json");
+        if (!File.Exists(flavorPath)) flavorPath = Path.Combine(resourceDirectory, "Lore", "flavor_text.json");
+        
+        if (File.Exists(flavorPath))
+        {
+            try
+            {
+                var json = File.ReadAllText(flavorPath);
+                _flavorTexts = JsonSerializer.Deserialize<Dictionary<int, string>>(json, options) ?? new();
+                HasLore = true;
+            }
+            catch
+            {
+                HasLore = false;
+            }
         }
 
         IsInitialized = true;
@@ -57,5 +78,11 @@ public static class ResourceManager
     public static LearnsetModel? GetLearnset(int index)
     {
         return _learnsets.FirstOrDefault(l => l.Index == index);
+    }
+
+    public static string? GetFlavorText(ushort speciesId)
+    {
+        if (!HasLore) return null;
+        return _flavorTexts.TryGetValue(speciesId, out var text) ? text : null;
     }
 }

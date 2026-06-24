@@ -60,7 +60,7 @@ A browser-based suite of Pokémon tools that shares the same core logic as the d
 **Platform**: Discord  
 **Name**: RotoDex Bot  
 
-A Discord bot that provides remote access to RotoDex systems directly from your server.
+A Discord bot that provides remote access to RotoDex systems directly from your server. Currently online and connected to the `Roto.Core` legality engine.
 
 **Commands**:
 - `/check` - Legality reports

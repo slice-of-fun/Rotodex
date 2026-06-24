@@ -35,3 +35,4 @@ pkhex-upstream/
 *.dll
 
 legacy/
+.env

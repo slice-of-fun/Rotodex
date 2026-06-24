@@ -16,55 +16,31 @@ Resources are static data that change only when PKHeX updates. They do not need 
 
 ## Resource Directory Structure
 
+RotoDex uses a **Dual-Folder Structure** to strictly separate game mechanics (Core) from encyclopedia data (Lore).
+
 ```
 resources/
 │
-├── Encounters/
-│   ├── Gen1/
-│   ├── Gen2/
-│   ├── ...
-│   └── Gen9/
+├── Core/
+│   ├── Encounters/
+│   ├── Learnsets/
+│   ├── MysteryGifts/
+│   ├── PersonalData/
+│   ├── Species/
+│   ├── Moves/
+│   ├── Abilities/
+│   ├── Locations/
+│   ├── Text/
+│   └── Metadata/
+│       └── resource-version.json
 │
-├── Learnsets/
-│   ├── Gen1.bin
-│   ├── Gen2.bin
-│   ├── ...
-│   └── Gen9.bin
-│
-├── MysteryGifts/
-│   ├── Gen4/
-│   ├── Gen5/
-│   ├── ...
-│   └── Gen9/
-│
-├── PersonalData/
-│   ├── Gen1.bin
-│   └── ...
-│
-├── Species/
-│   ├── names_en.txt
-│   ├── names_ja.txt
-│   └── ...
-│
-├── Moves/
-│   ├── names_en.txt
-│   └── data.bin
-│
-├── Abilities/
-│   ├── names_en.txt
-│   └── data.bin
-│
-├── Locations/
-│   ├── BDSP_en.txt
-│   ├── SWSH_en.txt
-│   └── ...
-│
-├── Text/
-│   ├── UI_en.txt
-│   └── UI_ja.txt
-│
-└── Metadata/
-    └── resource-version.json
+├── Lore/  (Optional Extension)
+│   ├── link.json      <-- The mapping bridge between Core and Lore
+│   ├── FlavorText/
+│   ├── FormSprites/
+│   ├── Evolutions/
+│   └── Metadata/
+│       └── pokeapi-version.json
 ```
 
 ---

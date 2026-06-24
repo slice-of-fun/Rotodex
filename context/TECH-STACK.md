@@ -65,13 +65,19 @@ The decision between them is made at the start of Phase 1 and documented in an A
 
 ---
 
-## PKHeX Engine
+## Upstream Engines
 
 ### PKHeX Core (Cloned & Renamed)
 
 Referenced directly from source after cloning and applying the renaming process in `RotoDex.Adapter`.
 
 **Why Cloned & Renamed:** Ensures full control over the upstream source code, immediate access to updates without waiting for package publishes, and seamless integration into the RotoDex namespace ecosystem.
+
+### PokeAPI (Raw CSV Clone)
+
+Cloned directly as raw CSV files into `upstream_lore/` to provide offline access to rich encyclopedic data (sprites, flavor text, evolution logic).
+
+**Why Cloned:** Prevents network dependencies and API rate limits, keeping RotoDex 100% offline-first while still surfacing beautiful, rich data to the UI.
 
 ---
 
