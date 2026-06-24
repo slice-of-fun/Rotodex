@@ -33,10 +33,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Roto.Core\Roto.Core.csproj" />
     <ProjectReference Include="..\RotoDex.Drawing.Misc\RotoDex.Drawing.Misc.csproj" />
     <ProjectReference Include="..\RotoDex.Drawing.PokeSprite\RotoDex.Drawing.PokeSprite.csproj" />
     <ProjectReference Include="..\RotoDex.Drawing\RotoDex.Drawing.csproj" />
+    <ProjectReference Include="..\Roto.Core\Roto.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
