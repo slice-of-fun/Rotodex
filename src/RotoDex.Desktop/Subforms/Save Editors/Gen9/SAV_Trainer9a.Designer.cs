@@ -1,4 +1,4 @@
-﻿namespace RotoDex.Desktop
+namespace RotoDex.Desktop
 {
     partial class SAV_Trainer9a
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SAV_Trainer9a));
             B_Cancel = new System.Windows.Forms.Button();
             B_Save = new System.Windows.Forms.Button();
             TB_OTName = new System.Windows.Forms.TextBox();
@@ -762,7 +761,6 @@
             // CB_Gender
             // 
             CB_Gender.AllowClick = true;
-            CB_Gender.BackgroundImage = (System.Drawing.Image)resources.GetObject("CB_Gender.BackgroundImage");
             CB_Gender.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             CB_Gender.Gender = 2;
             CB_Gender.Location = new System.Drawing.Point(129, 3);
